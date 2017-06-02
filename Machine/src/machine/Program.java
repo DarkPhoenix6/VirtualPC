@@ -53,7 +53,7 @@ public class Program {
 	 * @input 3 is the number of terms in the series
 	 * @return The program to Sum a Geometric Series
 	 */
-	public static short[] summingAGoemetricSeries() // Var c is number of terms
+	public static short[] summingAnArithmeticSeries() // Var c is number of terms
 	{
 		short[] program = { 799, 798, 797, 199, 398, 597, 610, 296, 896, 000, 002 };
 		return program;
@@ -135,7 +135,7 @@ public class Program {
 			}
 			case SUMMATIONOFSERIES:
 			{
-				return summingAGoemetricSeries();
+				return summingAnArithmeticSeries();
 			}
 			
 		}
@@ -155,7 +155,7 @@ public class Program {
 				+ " For Division Select: 3\n"
 				+ " To Determine the Greater of Two Numbers Select: 4\n"
 				+ " To Determine the Lesser of Two Numbers Select: 5\n"
-				+ " To Get the Summation of o GeoMetric Series: Press 6\n"
+				+ " To Get the Summation of a Arithmetic Series: Press 6\n"
 				+ "\n"
 				+ "\n Enter Selection: ";
 		
