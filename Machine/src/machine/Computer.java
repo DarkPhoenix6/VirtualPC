@@ -33,8 +33,11 @@ public class Computer {
 		this.Storage = new PersistantStorage[ 2 ];
 		this.setStorage( (short) 1, new HardDrive());
 		this.setStorage( (short) 0, new SolidState());
-		LoadProgram(getStorage()[0].getProgram(getStorage()[0].menu()));
+		LoadProgram(getStorage()[0].getProgram(getStorage()[0].menu()), 0);
 	}
+
+
+	
 
 
 	/**
@@ -200,6 +203,7 @@ public class Computer {
 	 * @param program
 	 * @throws NullPointerException
 	 * @throws Invalid
+	 * @deprecated
 	 */
 	private void LoadProgram(List<MemElem> program) throws NullPointerException, Invalid {
 		// TODO Auto-generated method stub
@@ -207,14 +211,30 @@ public class Computer {
 		{
 			this.Memory.write(this.cpu.getPC().read(), program.get(this.cpu.getPC().read()));
 			this.cpu.getPC().inc();
-			;
 		}
 		
-		/*for ( short x : program) // for each "x" in "program"
+
+		this.cpu.setProgramLength((short) program.toArray().length);
+		this.cpu.getPC().branch((short) 0);
+		this.cpu.setRunFlag(true);
+	}
+	
+	/**
+	 * 
+	 * @param program
+	 * @param i The Persistent Storage Drive Number
+	 * @throws NullPointerException
+	 * @throws Invalid
+	 */
+	private void LoadProgram(List<MemElem> program, int i) throws NullPointerException, Invalid {
+		// TODO Auto-generated method stub
+		while ( this.cpu.getPC().read() < program.toArray().length ) // for each "x" in "program"
 		{
-			this.Memory.write(PC.read(), x);
-			this.PC.inc();
-		}*/
+			this.getStorage()[i].implementLatency();
+			this.Memory.write(this.cpu.getPC().read(), program.get(this.cpu.getPC().read()));
+			this.cpu.getPC().inc();
+		}
+		
 		this.cpu.setProgramLength((short) program.toArray().length);
 		this.cpu.getPC().branch((short) 0);
 		this.cpu.setRunFlag(true);

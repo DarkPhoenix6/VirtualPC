@@ -25,6 +25,7 @@ public abstract class PersistantStorage extends MainMem{
 	 */
 	private MainMem[] MFT = new MainMem[2]; 
 	private short endOfFinalFile;
+	private double totalLatency;
 	/**
 	 * @var latency is the simulated latency of the "hardware"
 	 */
@@ -38,6 +39,7 @@ public abstract class PersistantStorage extends MainMem{
 		initializeMFT(100);
 		setEndOfFinalFile((short) 0);
 		setLatency(100);
+		setTotalLatency(0);
 		// TODO Auto-generated constructor stub
 	}
 
@@ -52,18 +54,19 @@ public abstract class PersistantStorage extends MainMem{
 		initializeMFT(size/10);
 		setEndOfFinalFile((short) 0);
 		setLatency(100);
+		setTotalLatency(0);
 		// TODO Auto-generated constructor stub
 	}
 
+	
 	/**
 	 * @param size 
-	 * 
+	 * @Description Initializes the array simulating the Master File Table
 	 */
 	private void initializeMFT(int size) {
 		// TODO Auto-generated method stub
 		for (int i = 0; i < 2; i++ )
 		{
-			
 			MFT[i] = new MainMem(size);
 		}
 	}
@@ -150,6 +153,7 @@ public abstract class PersistantStorage extends MainMem{
 			this.setMFT( (short) 0, k, this.getEndOfFinalFile());
 			for (short j = 0; j < arr.length && this.getEndOfFinalFile() < super.getMem().length; j++ )
 			{
+				implementLatency();
 				write( this.getEndOfFinalFile(), arr[ j ] );
 				this.IncrementEndOfFinalFile();
 			}
@@ -193,13 +197,16 @@ public abstract class PersistantStorage extends MainMem{
 	public abstract short menu();
 
 	
-	private void implementLatency()
+	protected void implementLatency()
 	{
-		try {
-		      Thread.sleep( this.getLatencyMil(), this.getLatencyNano() );
-		} catch (InterruptedException IE) 
+		try 
 		{
-			
+			Thread.sleep( this.getLatencyMil(), this.getLatencyNano() );
+			setTotalLatency();
+		}
+		catch (InterruptedException IE) 
+		{
+			System.err.println("Bad Stuff Happened!");
 		}
 	}
 
@@ -224,6 +231,7 @@ public abstract class PersistantStorage extends MainMem{
 				+ "\n latency=%s"
 				+ "\n latencyMS=%d"
 				+ "\n latencyNS=%d"
+				+ "\n TotalLatency= %f"
 				+ "\n MFT[0]:"
 				+ "\n%s"
 				+ "\n \n"
@@ -233,10 +241,32 @@ public abstract class PersistantStorage extends MainMem{
 				+ "\n"
 				+ "File System:\n"
 				+ "%s", instanceType,
-				endOfFinalFile, latency, getLatencyMil(), getLatencyNano(), MFT[0].Print2String(), 
+				endOfFinalFile, latency, getLatencyMil(), getLatencyNano(), getTotalLatency(), MFT[0].Print2String(), 
 				MFT[1].Print2String(), super.Print2String());
 	}
+
+
+
+	/**
+	 * @return the totalLatency
+	 */
+	public double getTotalLatency() {
+		return totalLatency;
+	}
+
+
+
+	/**
+	 * @param totalLatency the totalLatency to set
+	 */
+	public void setTotalLatency(double totalLatency) {
+		this.totalLatency = totalLatency;
+	}
 	
+	public void setTotalLatency()
+	{
+		setTotalLatency( getTotalLatency() + getLatency() );
+	}
 	
 	
 
