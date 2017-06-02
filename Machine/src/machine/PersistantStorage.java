@@ -25,24 +25,19 @@ public abstract class PersistantStorage extends MainMem{
 	 */
 	private MainMem[] MFT = new MainMem[2]; 
 	private short endOfFinalFile;
-	private double totalLatency;
 	/**
 	 * @var latency is the simulated latency of the "hardware"
 	 */
 	protected double latency; // Milliseconds 
+	private double totalLatency; // Milliseconds
+	
 	/**
-	 * 
+	 * @Description Default Constructor calls one-integer-paramater Constructor
 	 */
-	public PersistantStorage() {
-		super(1000);
-		//MFT = new MainMem[2];
-		initializeMFT(100);
-		setEndOfFinalFile((short) 0);
-		setLatency(100);
-		setTotalLatency(0);
-		// TODO Auto-generated constructor stub
+	public PersistantStorage() 
+	{
+		this(1000);
 	}
-
 
 
 	/**
@@ -50,7 +45,6 @@ public abstract class PersistantStorage extends MainMem{
 	 */
 	public PersistantStorage(int size) {
 		super(size);
-		//MFT = new MainMem[2];
 		initializeMFT(size/10);
 		setEndOfFinalFile((short) 0);
 		setLatency(100);
@@ -71,16 +65,12 @@ public abstract class PersistantStorage extends MainMem{
 		}
 	}
 
-
-
 	/**
 	 * @return the endOfFinalFile
 	 */
 	public short getEndOfFinalFile() {
 		return endOfFinalFile;
 	}
-
-
 
 	/**
 	 * @param endOfFinalFile the endOfFinalFile to set
@@ -93,8 +83,6 @@ public abstract class PersistantStorage extends MainMem{
 	{
 		this.setEndOfFinalFile((short) 1);
 	}
-
-
 
 	/**
 	 * @return the latency
@@ -113,8 +101,25 @@ public abstract class PersistantStorage extends MainMem{
 		int nanoResult = (int) (nano % 1000000);
 		return nanoResult;
 	}
-	public abstract void setLatency();
+	
+	/**
+	 * @return the totalLatency
+	 */
+	public double getTotalLatency() {
+		return totalLatency;
+	}
 
+	/**
+	 * @param totalLatency the totalLatency to set
+	 */
+	public void setTotalLatency(double totalLatency) {
+		this.totalLatency = totalLatency;
+	}
+	
+	public void setTotalLatency()
+	{
+		setTotalLatency( getTotalLatency() + getLatency() );
+	}
 	/**
 	 * @param latency the latency to set in milliseconds
 	 */
@@ -123,6 +128,7 @@ public abstract class PersistantStorage extends MainMem{
 		this.latency = latency;
 		
 	}
+	
 	/**
 	 * 
 	 * @param index
@@ -193,6 +199,8 @@ public abstract class PersistantStorage extends MainMem{
 		MFT[row].write( column, val );
 		
 	}
+	
+	public abstract void setLatency();
 
 	public abstract short menu();
 
@@ -247,26 +255,7 @@ public abstract class PersistantStorage extends MainMem{
 
 
 
-	/**
-	 * @return the totalLatency
-	 */
-	public double getTotalLatency() {
-		return totalLatency;
-	}
 
-
-
-	/**
-	 * @param totalLatency the totalLatency to set
-	 */
-	public void setTotalLatency(double totalLatency) {
-		this.totalLatency = totalLatency;
-	}
-	
-	public void setTotalLatency()
-	{
-		setTotalLatency( getTotalLatency() + getLatency() );
-	}
 	
 	
 

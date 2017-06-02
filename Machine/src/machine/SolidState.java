@@ -19,10 +19,8 @@ public class SolidState extends PersistantStorage {
 	 */
 	public SolidState() {
 		// TODO Auto-generated constructor stub
-		super(100);
-		//program = new Program();
-		setLatency();
-		writeToDisk();
+		this(100);
+		
 	}
 
 	/**

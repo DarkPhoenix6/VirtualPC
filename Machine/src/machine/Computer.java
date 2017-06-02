@@ -36,15 +36,12 @@ public class Computer {
 		LoadProgram(getStorage()[0].getProgram(getStorage()[0].menu()), 0);
 	}
 
-
-	
-
-
 	/**
 	 * 
 	 * @param program
 	 * @throws Invalid 
 	 * @throws NullPointerException 
+	 * @deprecated
 	 */
 	public Computer(short[] program) throws NullPointerException, Invalid {
 		
@@ -52,6 +49,9 @@ public class Computer {
 		this.InDev = new InputDev();
 		this.OutDev = new OutputDev();
 		this.Memory = new MainMem();
+		this.Storage = new PersistantStorage[ 2 ];
+		this.setStorage( (short) 1, new HardDrive());
+		this.setStorage( (short) 0, new SolidState());
 		LoadProgram(program);
 	}
 
@@ -221,7 +221,7 @@ public class Computer {
 	
 	/**
 	 * 
-	 * @param program
+	 * @param program The List Containing the Selected Program
 	 * @param i The Persistent Storage Drive Number
 	 * @throws NullPointerException
 	 * @throws Invalid
@@ -255,15 +255,33 @@ public class Computer {
 		Storage[index] = storage;
 	}
 	
+	/**
+	 * @return
+	 */
+	private String PrintStorage() {
+		// TODO Auto-generated method stub
+		String storeageString = new String();
+		for ( PersistantStorage s: Storage)
+		{
+			storeageString += s + "\n";
+		}
+		return storeageString;
+	}
+	
+	/**
+	 * 
+	 */
 	@Override
 	public String toString() {
 		String pst = this.Memory.toString();
 		String CPUStr = this.cpu.toString();
+		String storageString = PrintStorage();
 		return String.format(
-				"%s"
+				"\n%s"
 				+ "%s\n"
-				+ "%s\n"
-				+ "%s", CPUStr, pst, Storage[0].toString(), Storage[1].toString());
+				+ "%s", CPUStr, pst, storageString );
 		
 	}
+
+
 }

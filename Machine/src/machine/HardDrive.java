@@ -21,10 +21,7 @@ public class HardDrive extends PersistantStorage {
 	 * 
 	 */
 	public HardDrive() {
-		super(1000);
-		program = new Program();
-		setLatency();
-		this.writeToDisk();
+		this(1000);
 		// TODO Auto-generated constructor stub
 	}
 

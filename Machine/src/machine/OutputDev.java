@@ -33,7 +33,7 @@ public class OutputDev {
 	 */
 	public void output(short read) {
 		// TODO Auto-generated method stub
-		System.out.println(read);
+		System.out.println("Result: " + read);
 		
 	}
 	
