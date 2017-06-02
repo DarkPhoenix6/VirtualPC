@@ -24,7 +24,6 @@ public class CPU {
 	private Accumulator ACC;
 	private ProgramCounter PC;
 	private InstructionRegister IR;
-	
 	private short OpCode;
 	private short Operand;
 	private short ProgramLength;
@@ -117,6 +116,7 @@ public class CPU {
 		this.IR.write( this.getMDR().read() );
 		OpCode = this.IR.getOpCode();
 		Operand = this.IR.getOperand();
+		setMAR(getOperand());
 		PC.inc();
 	}
 	
@@ -220,6 +220,7 @@ public class CPU {
 				case STORE:
 				{
 					//setStoreFlag(true);
+					setMAR(getOperand());
 					break;
 				}
 				case ADD:

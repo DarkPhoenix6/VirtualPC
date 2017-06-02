@@ -54,6 +54,25 @@ public class Computer {
 		this.setStorage( (short) 0, new SolidState());
 		LoadProgram(program);
 	}
+	
+	/**
+	 * 
+	 * @param program
+	 * @throws Invalid 
+	 * @throws NullPointerException 
+	 * 
+	 */
+	public Computer(List<MemElem> program) throws NullPointerException, Invalid {
+		
+		this.cpu = new CPU();
+		this.InDev = new InputDev();
+		this.OutDev = new OutputDev();
+		this.Memory = new MainMem();
+		this.Storage = new PersistantStorage[ 2 ];
+		this.setStorage( (short) 1, new HardDrive());
+		this.setStorage( (short) 0, new SolidState());
+		LoadProgram(program);
+	}
 
 	public void RunProgram() throws Invalid
 	{
@@ -202,7 +221,7 @@ public class Computer {
 	 * @param program
 	 * @throws NullPointerException
 	 * @throws Invalid
-	 * @deprecated
+	 * 
 	 */
 	private void LoadProgram(List<MemElem> program) throws NullPointerException, Invalid {
 		// TODO Auto-generated method stub
@@ -221,15 +240,15 @@ public class Computer {
 	/**
 	 * 
 	 * @param program The List Containing the Selected Program
-	 * @param i The Persistent Storage Drive Number
+	 * @param index The Persistent Storage Drive Number
 	 * @throws NullPointerException
 	 * @throws Invalid
 	 */
-	private void LoadProgram(List<MemElem> program, int i) throws NullPointerException, Invalid {
+	private void LoadProgram(List<MemElem> program, int index) throws NullPointerException, Invalid {
 		// TODO Auto-generated method stub
 		while ( this.cpu.getPC().read() < program.toArray().length ) // for each "x" in "program"
 		{
-			this.getStorage()[i].implementLatency();
+			this.getStorage()[index].implementLatency();
 			this.Memory.write(this.cpu.getPC().read(), program.get(this.cpu.getPC().read()));
 			this.cpu.getPC().inc();
 		}
@@ -249,6 +268,7 @@ public class Computer {
 	
 	/**
 	 * @param storage the storage to set
+	 * @param index The Persistent Storage Drive Number
 	 */
 	public void setStorage( short index, PersistantStorage storage) {
 		Storage[index] = storage;
