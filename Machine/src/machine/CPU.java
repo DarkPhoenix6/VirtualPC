@@ -113,6 +113,7 @@ public class CPU {
 
 	public void PostfetchInstruction()
 	{
+		//TODO: Implement MAR
 		this.IR.write( this.getMDR().read() );
 		OpCode = this.IR.getOpCode();
 		Operand = this.IR.getOperand();
@@ -125,6 +126,7 @@ public class CPU {
 	 */
 	public void execute() throws Invalid
 	{
+		//TODO: Implement MAR
 		switch(OpCode)
 		{
 				case STOP: 
@@ -199,6 +201,7 @@ public class CPU {
 		
 		if ( OpCode != STORE )
 		{
+			//TODO: Implement MAR
 			setOperand( );
 		}
 	}
@@ -253,11 +256,6 @@ public class CPU {
 		}
 	}
 	
-	
-	public void summation( short a, short b)
-	{
-		
-	}
 	/**
 	 * @return the opCode
 	 */
@@ -278,16 +276,19 @@ public class CPU {
 	 * @return the operand
 	 */
 	public short getOperand() {
+		//TODO: Implement MAR
 		return Operand;
 	}
 
 	public void setOperand() {
+		//TODO: Implement MAR
 		Operand = this.getPC().read();
 	}
 	/**
 	 * @param operand the operand to set
 	 */
 	public void setOperand(short operand) {
+		//TODO: Implement MAR
 		Operand = operand;
 	}
 
