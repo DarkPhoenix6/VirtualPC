@@ -63,6 +63,7 @@ public abstract class PersistantStorage extends MainMem{
 		// TODO Auto-generated method stub
 		for (int i = 0; i < 2; i++ )
 		{
+			
 			MFT[i] = new MainMem(size);
 		}
 	}
@@ -98,8 +99,17 @@ public abstract class PersistantStorage extends MainMem{
 	public double getLatency() {
 		return latency;
 	}
+	
+	
+	public long getLatencyMil() {
+		return (long) latency;
+	}
 
-
+	public int getLatencyNano() {
+		double nano = getLatency() * 1000000;
+		int nanoResult = (int) (nano % 1000000);
+		return nanoResult;
+	}
 	public abstract void setLatency();
 
 	/**
@@ -182,6 +192,16 @@ public abstract class PersistantStorage extends MainMem{
 
 	public abstract short menu();
 
+	
+	private void implementLatency()
+	{
+		try {
+		      Thread.sleep( this.getLatencyMil(), this.getLatencyNano() );
+		} catch (InterruptedException IE) 
+		{
+			
+		}
+	}
 
 	/* (non-Javadoc)
 	 * @see java.lang.Object#toString()
@@ -202,6 +222,8 @@ public abstract class PersistantStorage extends MainMem{
 				+ "\n TYPE:\t%s"
 				+ "\n endOfFinalFile=%s"
 				+ "\n latency=%s"
+				+ "\n latencyMS=%d"
+				+ "\n latencyNS=%d"
 				+ "\n MFT[0]:"
 				+ "\n%s"
 				+ "\n \n"
@@ -211,7 +233,7 @@ public abstract class PersistantStorage extends MainMem{
 				+ "\n"
 				+ "File System:\n"
 				+ "%s", instanceType,
-				endOfFinalFile, latency, MFT[0].Print2String(), 
+				endOfFinalFile, latency, getLatencyMil(), getLatencyNano(), MFT[0].Print2String(), 
 				MFT[1].Print2String(), super.Print2String());
 	}
 	

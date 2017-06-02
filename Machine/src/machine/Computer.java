@@ -241,8 +241,9 @@ public class Computer {
 		String CPUStr = this.cpu.toString();
 		return String.format(
 				"%s"
-				+ "%s"
-				+ "%s", CPUStr, pst, Storage.toString());
+				+ "%s\n"
+				+ "%s\n"
+				+ "%s", CPUStr, pst, Storage[0].toString(), Storage[1].toString());
 		
 	}
 }
