@@ -13,10 +13,18 @@ package machine;
  */
 public class CPU {
 
-	private MemElem MDR; // Main Data Register
+	/**
+	 * @Description Main Data Register
+	 */
+	private MemElem MDR; 
+	/**
+	 * @Description Memory Address Register
+	 */
+	private MemElem MAR; // Memory Address Register
 	private Accumulator ACC;
 	private ProgramCounter PC;
 	private InstructionRegister IR;
+	
 	private short OpCode;
 	private short Operand;
 	private short ProgramLength;
@@ -47,6 +55,7 @@ public class CPU {
 		this.PC = new ProgramCounter(0);
 		this.IR = new InstructionRegister();
 		this.setMDR(new MemElem());
+		this.setMAR(new MemElem());
 		setOpCode((short) 0);
 		setOperand((short) 0);
 		setInFlag(false);
@@ -389,14 +398,31 @@ public class CPU {
 	}
 
 	/**
+	 * @return the MAR
+	 */
+	public MemElem getMAR() {
+		return MAR;
+	}
+
+	/**
+	 * @param val the MDR value to set
+	 */
+	public void setMAR(short val) {
+		MAR.write(val);
+	}
+	/**
+	 * @param memElem the MAR to set
+	 */
+	public void setMAR(MemElem memElem) {
+		MAR = memElem;
+	}
+	/**
 	 * 
 	 */
 	public void preFetch() {
 		// TODO Auto-generated method stub
 		setLoadFlag(true);
 	}
-
-
 
 	/**
 	 * @deprecated
@@ -405,7 +431,6 @@ public class CPU {
 		// TODO Auto-generated method stub
 		this.PostfetchInstruction();
 	}
-
 
 
 	/**
@@ -451,7 +476,6 @@ public class CPU {
 	}
 
 
-
 	/**
 	 * @param executeInstFlag the executeInstFlag to set
 	 */
@@ -482,9 +506,6 @@ public class CPU {
 				+ "\n", this.ACC.toString(), this.PC.toString(), this.IR.toString(), (int)this.OpCode, (int)this.Operand, this.MDR.toString() );
 		
 	}
-
-
-
 
 
 }

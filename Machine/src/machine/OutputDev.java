@@ -29,7 +29,7 @@ public class OutputDev {
 
 
 	/**
-	 * @param read
+	 * @param read The Result to Output 
 	 */
 	public void output(short read) {
 		// TODO Auto-generated method stub
