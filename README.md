@@ -8,3 +8,5 @@ as well as implement Inheritance IS-A relationships
 
 Started work on compiler
 Compiler works!
+
+All comments ( keyword "REM" ) MUST be on their own line currently.
