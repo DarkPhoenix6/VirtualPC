@@ -5,6 +5,9 @@
  */
 package compiler;
 
+import java.util.Arrays;
+import java.util.List;
+
 /**
  * @class	Compiler
  * @author 	Chris 
@@ -13,9 +16,10 @@ package compiler;
  */
 public class Compiler {
 
+	protected static SymbolTableList SymbolTable;
 	private static ReadFile read;
 	private static WriteFile write;
-	protected static SymbolTableList SymbolTable;
+	
 	private static MLPIsTranslator translate;
 	/**
 	 * @param args
@@ -25,17 +29,17 @@ public class Compiler {
 
 		read = new ReadFile();
 		write = new WriteFile();
-		SymbolTable = new SymbolTableList();
 		
+
 		read.openFile("ToBeCompiled.txt");
 		write.openFile();
-		String[] toWrite = SymbolTable.generateSymbolTable(read.getInstructions());
+		//String[] toWrite = SymbolTable.generateSymbolTable(read.getInstructions());
 		write.writeFile(toWrite);
 		//write.writeFile(read.getInstructions());
 		read.closeFile();
 		write.closeFile();
-		read.openFile("InstructionsWritten.txt");
-		String[] MLPInstructions = read.getMLPI();
+		//read.openFile("InstructionsWritten.txt");
+		//String[] MLPInstructions = read.getMLPI();*/
 	}
 
 }

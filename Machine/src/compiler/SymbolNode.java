@@ -33,6 +33,17 @@ public class SymbolNode {
 	 * @param Value
 	 * @param Next
 	 */
+	public SymbolNode( String Name, short Location ) {
+		this( Name, Location, null, null);
+	}
+	
+	/**
+	 * 
+	 * @param Name
+	 * @param Location
+	 * @param Value
+	 * @param Next
+	 */
 	public SymbolNode( String Name, short Location, MemElem Value, SymbolNode Next) {
 		this.name = Name;
 		this.location = Location;
