@@ -74,6 +74,7 @@ public class WriteFile implements Write {
 
 				if ( a < Str.length )
 				{
+					
 					output.format("%s%s", Str[a++], newline);
 
 				}

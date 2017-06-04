@@ -31,9 +31,10 @@ public class Compiler {
 		write = new WriteFile();
 		
 
+		SymbolTable = new SymbolTableList();
 		read.openFile("ToBeCompiled.txt");
 		write.openFile();
-		//String[] toWrite = SymbolTable.generateSymbolTable(read.getInstructions());
+		String[] toWrite = SymbolTable.generateSymbolTable(read.getInstructions());
 		write.writeFile(toWrite);
 		//write.writeFile(read.getInstructions());
 		read.closeFile();

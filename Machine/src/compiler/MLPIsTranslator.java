@@ -43,7 +43,7 @@ public class MLPIsTranslator {
 	private BRANCHUNCONDITIONALLY branch;
 	private BRANCHONLYIF0 branchIf0;
 	private BRANCHIFGTR0 branchIfGTR0;
-	
+	private DataControl DC;
 
 	
 	public MLPIsTranslator()
@@ -83,11 +83,17 @@ public class MLPIsTranslator {
 				}
 			}
 						
-			
+			for (String B : DC.getNames() )
+			{
+				if ( B == instructions[i] )
+				{
+					returnString[i / 2] = instructions[i+1];
+				}
+			}
 			i += 2;
 		}
 		
-		return
+		return ReturnString
 	}
 
 	// Accessors

@@ -15,12 +15,18 @@ public class SymbolTableList {
 
 	private final SymbolNode STLHead;
 	private SymbolNode last;
-	
+	private int Avail;
+	int count;
 
+	private STOPJOB stop;
+	
 	public SymbolTableList()
 	{
 		STLHead = new SymbolNode("HEADNODE");
 		last = getSTLHead();
+		Avail = 99;
+		count = 0;
+
 	}
 
 	/**
@@ -29,6 +35,8 @@ public class SymbolTableList {
 	public SymbolTableList(SymbolNode Head ) {
 		STLHead = Head;
 		this.last = getSTLHead();
+		Avail = 99;
+		count = 0;
 	}
 	
 	// Accessors
@@ -40,6 +48,20 @@ public class SymbolTableList {
 	}
 
 	
+
+	/**
+	 * @return the avail
+	 */
+	public int getAvail() {
+		return Avail;
+	}
+
+	/**
+	 * @return the count
+	 */
+	public int getCount() {
+		return count;
+	}
 
 	/**
 	 * @return the sTLHead
@@ -61,24 +83,48 @@ public class SymbolTableList {
 			last = last.getNext();
 	}
 	
+	/**
+	 * @param avail the avail to set
+	 */
+	public void setAvail(int avail) {
+		Avail = avail;
+	}
+
 	public void insertAtEnd( String name, short location )
 	{
 		last.setNext( new SymbolNode( name, location ) );
 		iterateLast();
 	}
 	
+	/**
+	 * @Description Decrement Avail
+	 */
+	protected void decAvail()
+	{
+		setAvail(getAvail() - 1);
+	}
+	
 	public void insertAtEnd( String name, short location, short Value)
 	{
-		last.setNext( new SymbolNode( name, location, Value ) );
+		last.setNext( new SymbolNode( name, (short) getAvail(), Value ) );
+		decAvail();
 		iterateLast();
 	}
 	
+	/**
+	 * @param count the count to set
+	 */
+	public void setCount(int count) {
+		this.count = count;
+	}
+
 	public String[] generateSymbolTable( String[] Str )
 	{
 		//TODO
 		String[] postDCString = addDataControl( Str );
 		int i = 0;
 		int arrPlace = 0;
+		String test = new String( "STOP");
 		int[] arr = new int[postDCString.length];
 		//TODO check for DCs And inject Stores at top of list
 		for ( String S : postDCString)
@@ -96,7 +142,49 @@ public class SymbolTableList {
 			}
 			
 		}
-		return postDCString;
+		
+		String temp = null;
+		
+		for ( String ST : postDCString )
+		{
+			for ( String S : ST.split("\\s") )
+			{
+				if ( ! S.contains(":") )
+				{
+					if ( temp == null )
+					{
+						temp = S;
+					}
+					else
+					{
+						temp += " " + S;
+					}
+				}
+			}
+		}
+		String[] tempString = temp.split("\\s");
+		String[] returnString = new String[ (tempString.length) / 2 ];
+		int a = 0;
+		int returnCount = 0;
+		while ( a < tempString.length -2  )
+		{
+			
+
+			
+				
+			if (  tempString[a].contains("STOP"))
+			{
+				returnString[ returnCount++ ] = tempString[a++];
+			}
+			else
+			{
+				returnString[ returnCount++ ] = tempString[a++] + " " + tempString[a++];
+			}
+		
+			
+			
+		}
+		return returnString;
 		
 	}
 
@@ -107,9 +195,10 @@ public class SymbolTableList {
 	private String[] addDataControl(String[] preDC ) {
 		// TODO Auto-generated method stub
 		
-		int count = 0;
+		
 		int tempPlace = 0;
 		String BR = new String("BR DATACONTROL");
+		String TOP = new String("BR TOP");
 		String[] temp = new String[preDC.length];
 		int place = 0;
 		
@@ -121,9 +210,18 @@ public class SymbolTableList {
 			if ( instruction.contains(": DC") || instruction.contains(": dc"))
 			{
 				String substring = instruction.substring(0, instruction.indexOf(":"));
-				temp[tempPlace] = new String( "LD " + place );
+				if ( tempPlace == 0 )
+				{
+					temp[tempPlace] = new String( "DATACONTROL: LD " + (place + 1) );
+				}
+				else
+				{
+					temp[tempPlace] = new String( "LD " + (place + 1) );
+				}
+				
 				tempPlace++;
 				temp[tempPlace] = new String( "STORE " + substring );
+				tempPlace++;
 				arr[count] = place;
 				count++;
 				place++;
@@ -154,6 +252,8 @@ public class SymbolTableList {
 				postDCPlace++;
 			}
 			
+			postDCString[postDCString.length - 1] = TOP;
+			System.out.println(postDCString.length);
 			return postDCString;
 		}
 		else
