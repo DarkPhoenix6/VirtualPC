@@ -18,6 +18,7 @@ public interface Read {
 	 * @param file
 	 */
 	public void openFile( String file );
+	public void openFile( );
 	/**
 	 * @Purpose To Close the file after Reading/Writing
 	 */

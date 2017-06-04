@@ -163,7 +163,7 @@ public class SymbolTableList {
 			}
 		}
 		String[] tempString = temp.split("\\s");
-		String[] returnString = new String[ (tempString.length) / 2 ];
+		String[] returnString = new String[ (tempString.length / 2) + 1];
 		int a = 0;
 		int returnCount = 0;
 		while ( a < tempString.length -2  )
@@ -172,7 +172,7 @@ public class SymbolTableList {
 
 			
 				
-			if (  tempString[a].contains("STOP"))
+			if (  tempString[a].contains("STOP") )
 			{
 				returnString[ returnCount++ ] = tempString[a++];
 			}
@@ -184,6 +184,7 @@ public class SymbolTableList {
 			
 			
 		}
+		returnString[returnCount] = new String("BR TOP");
 		return returnString;
 		
 	}
@@ -242,7 +243,15 @@ public class SymbolTableList {
 			int postDCPlace = 1;
 			for ( String instruction: preDC )
 			{
-				postDCString[postDCPlace] = instruction;
+				if ( postDCPlace == 1 )
+				{
+					postDCString[postDCPlace] = "TOP: " + instruction;
+				}
+				else
+				{
+					postDCString[postDCPlace] = instruction;
+				}
+				
 				postDCPlace++;
 			}
 			
@@ -290,10 +299,10 @@ public class SymbolTableList {
 		setLast(getSTLHead());
 		int loc = -1;
 			
-		while ( getLast() != saveSpot && name != getLast().getName() )
+		while ( getLast() != saveSpot && ! getLast().getName().contains(name) )
 		{
 			iterateLast();
-			if ( name == getLast().getName())
+			if ( getLast().getName().contains(name))
 			{
 				loc = getLast().getLocation();
 			}

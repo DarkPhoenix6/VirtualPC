@@ -15,6 +15,7 @@ public interface Write extends Read {
 
 	final String newline = System.getProperty("line.separator");
 	public void writeFile( String[] Str );
+	
 	public default void openFile(  )
 	{
 		openFile("InstructionsWritten.txt");

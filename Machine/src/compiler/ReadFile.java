@@ -30,6 +30,7 @@ public class ReadFile implements Read {
 		try 
 		{
 			input = new Scanner( new File(file) );
+			
 		}
 		catch ( FileNotFoundException f)
 		{
@@ -70,7 +71,12 @@ public class ReadFile implements Read {
 			System.err.print("Error Reading The File!");
 			System.exit(1);
 		}
+		System.out.println(Str);
 		String[] instructions = removeComments(Str);
+		for ( String S: instructions)
+		{
+			System.out.println(S);
+		}
 		return instructions;
 	}
 
@@ -117,8 +123,13 @@ public class ReadFile implements Read {
 					i++;
 				}
 			}
+			return newStr;
 		}
-		return newStr;
+		else
+		{
+			return instructions;
+		}
+		
 	}
 	
 	/**
@@ -145,8 +156,18 @@ public class ReadFile implements Read {
 
 		if ( input != null )
 		{
+			input.reset();
 			input.close();
 		}
+	}
+
+	/* (non-Javadoc)
+	 * @see compiler.Read#openFile()
+	 */
+	@Override
+	public void openFile() {
+		// TODO Auto-generated method stub
+		openFile("ToBeCompiled.txt");
 	}
 
 }
