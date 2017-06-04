@@ -207,8 +207,7 @@ public class MLPIsTranslator {
 			{
 				if ( instructions[i].contains(B) )
 				{
-					if ( isInt( instructions[i + 1] ) )//TODO: if instructions[i + 1] is a integer 	then
-						//			returnString[i / 2] = new String( String.valueOf(MULTIPLY + instructions[i + 1] ) );
+					if ( isInt( instructions[i + 1] ) )
 					{
 						returnString[i / 2] = new String( String.valueOf(LOAD + Integer.valueOf(instructions[i + 1] ) ) );
 					}
@@ -315,10 +314,15 @@ public class MLPIsTranslator {
 		return returnString;
 	}*/
 
+
+
+	// Accessors
+
 	/**
 	 * @param string
 	 * @return
 	 */
+	@SuppressWarnings("unused")
 	private boolean isInt(String string) {
 		// TODO Auto-generated method stub
 		try
@@ -331,10 +335,6 @@ public class MLPIsTranslator {
 			return false;
 		}
 	}
-
-	// Accessors
-
-
 	/**
 	 * @return the locationCounter
 	 */

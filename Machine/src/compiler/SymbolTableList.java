@@ -321,4 +321,43 @@ public class SymbolTableList {
 		
 
 	}
+
+	/* (non-Javadoc)
+	 * @see java.lang.Object#toString()
+	 */
+	@Override
+	public String toString() {
+		return String.format("SymbolTableList \n"
+				+ "Avail= %s\n"
+				+ "count= %s\n"
+				+ "\n"
+				+ "%s", Avail, count, printTable());
+	}
+
+	/**
+	 * @return
+	 */
+	private String printTable() {
+		// TODO Auto-generated method stub
+		SymbolNode saveSpot = getLast();
+		setLast(this.getSTLHead());
+		
+		String returnString = null;
+		while ( getLast() != null )
+		{
+			if ( returnString == null )
+			{
+				returnString = getLast().toString();
+			}
+			else 
+			{
+				returnString += getLast().toString();
+			}
+			this.iterateLast();
+		}
+		setLast( saveSpot );
+		return returnString;
+	}
+	
+	
 }
