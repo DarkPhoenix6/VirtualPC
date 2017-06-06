@@ -5,36 +5,69 @@
  */
 package compiler;
 
-import java.util.Arrays;
-import java.util.List;
-
 /**
  * @class	Compiler
- * @author 	Chris 
+ * @author 	Chris Fedun
  * @date	Jun 3, 2017
  *
  */
 public class Compiler {
 
-	protected static SymbolTableList SymbolTable;
-	private static ReadFile read;
-	private static WriteFile write;
-	private static STOPJOB stop;
-	private static MLPIsTranslator translate;
+
+	
+	protected SymbolTableList SymbolTable;
+	private ReadFile read;
+	private WriteFile write;
+
+	private MLPIsTranslator translate;
+	
+
+	public Compiler() {
+		read = new ReadFile();
+		write = new WriteFile();
+		translate = new MLPIsTranslator();
+		SymbolTable = new SymbolTableList();
+	}
+
+	public String[] compile( )
+	{
+		String[] s = new String[1];
+		s[0] = new String( "ToBeCompiled.txt" );
+		return compile( s );
+		
+	}
+	
+	public String[] compile( String[] args)
+	{
+		read.openFile( args[0] );
+		write.openFile( );
+		String[] toWrite = SymbolTable.generateSymbolTable(read.getInstructions());
+		write.writeFile(toWrite);
+		read.closeFile();
+		write.closeFile();
+		read.openFile("InstructionsWritten.txt");
+		String[] MLPInstructions = translate.translate( read.getInstructions(), SymbolTable );
+		read.closeFile();
+		return MLPInstructions;
+		
+	}
 	/**
 	 * @param args
 	 */
 	public static void main(String[] args) {
 		// TODO Auto-generated method stub
+		
+		SymbolTableList SymbolTable;
+		ReadFile read;
+		WriteFile write;
 
+		MLPIsTranslator translate;
+		
 		read = new ReadFile();
 		write = new WriteFile();
 		translate = new MLPIsTranslator();
 
-		for ( String S : stop.getNames(true) )
-		{
-			System.out.println(S);
-		}
+
 		SymbolTable = new SymbolTableList();
 		read.openFile("ToBeCompiled.txt");
 		write.openFile();
@@ -53,6 +86,20 @@ public class Compiler {
 		write.writeFile(MLPInstructions);
 		read.closeFile();
 		write.closeFile();
+		write.openFile("SymbolTable.txt");
+		write.writeFile(SymbolTable.toString());
+		write.closeFile();
+		
 	}
+
+	/* (non-Javadoc)
+	 * @see java.lang.Object#toString()
+	 */
+	@Override
+	public String toString() {
+		return String.format("%s\n", SymbolTable);
+	}
+	
+	
 
 }

@@ -6,7 +6,7 @@
 package machine;
 
 import java.util.List;
-
+import compiler.Compiler;
 /**
  * @class	Computer
  * @author 	Chris Fedun
@@ -19,7 +19,7 @@ public class Computer {
 	private OutputDev OutDev;
 	private MainMem Memory;
 	private PersistantStorage[] Storage;
-	
+	private Compiler compiler;
 	/**
 	 * 
 	 * @throws NullPointerException
@@ -30,12 +30,30 @@ public class Computer {
 		this.InDev = new InputDev();
 		this.OutDev = new OutputDev();
 		this.Memory = new MainMem();
+		this.compiler = new Compiler();
 		this.Storage = new PersistantStorage[ 2 ];
 		this.setStorage( (short) 1, new HardDrive());
 		this.setStorage( (short) 0, new SolidState());
 		LoadProgram(getStorage()[0].getProgram(getStorage()[0].menu()), 0);
 	}
 
+	/**
+	 * 
+	 * @param args
+	 * @throws NullPointerException
+	 * @throws Invalid
+	 */
+	public Computer( String[] args ) throws NullPointerException, Invalid {
+		this.cpu = new CPU();
+		this.InDev = new InputDev();
+		this.OutDev = new OutputDev();
+		this.Memory = new MainMem();
+		this.compiler = new Compiler();
+		this.Storage = new PersistantStorage[ 2 ];
+		this.setStorage( (short) 1, new HardDrive());
+		this.setStorage( (short) 0, new SolidState());
+		LoadProgram(compiler.compile(args));
+	}
 	/**
 	 * 
 	 * @param program
@@ -239,6 +257,26 @@ public class Computer {
 	
 	/**
 	 * 
+	 * @param instructions
+	 * @throws NullPointerException
+	 * @throws Invalid
+	 */
+	private void LoadProgram(String[] instructions) throws NullPointerException, Invalid
+	{
+		while ( this.cpu.getPC().read() < instructions.length ) // for each "x" in "program"
+		{
+			this.Memory.write( this.cpu.getPC().read(), Short.valueOf( instructions[ this.cpu.getPC().read() ] ) );
+			this.cpu.getPC().inc();
+		}
+		
+
+		this.cpu.setProgramLength((short) instructions.length );
+		this.cpu.getPC().branch((short) 0);
+		this.cpu.setRunFlag(true);
+	}
+	
+	/**
+	 * 
 	 * @param program The List Containing the Selected Program
 	 * @param index The Persistent Storage Drive Number
 	 * @throws NullPointerException
@@ -298,7 +336,8 @@ public class Computer {
 		return String.format(
 				"\n%s"
 				+ "%s\n"
-				+ "%s", CPUStr, pst, storageString );
+				+ "%s\n"
+				+ "%s", CPUStr, pst, storageString, compiler.toString() );
 		
 	}
 

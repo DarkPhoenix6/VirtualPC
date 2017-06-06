@@ -1,0 +1,28 @@
+FOR X = 0, X < 3, X += 1
+Y += IN ZED
+ROF
+
+
+X = 0
+WHILE X < 3
+IN ZED
+Y += ZED
+X += 1
+ELIHW
+
+
+V: DC 3
+W: DC 1
+X: DC 0
+Y: DC 0
+
+LOOP1: IN ZED
+LD ZED
+ADD Y
+STORE Y
+LD W
+ADD X
+STORE X
+LD V
+SUB X
+BGTR LOOP1

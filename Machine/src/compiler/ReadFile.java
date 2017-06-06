@@ -71,7 +71,7 @@ public class ReadFile implements Read {
 			System.err.print("Error Reading The File!");
 			System.exit(1);
 		}
-		System.out.println(Str);
+		//System.out.println(Str);
 		String[] instructions = removeComments(Str);
 		for ( String S: instructions)
 		{

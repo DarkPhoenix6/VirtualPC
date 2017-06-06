@@ -1,0 +1,13 @@
+REM Input three integers, determine their average and print the result.
+IN ECKS
+IN WHY
+IN ZED
+LD ECKS
+ADD WHY
+ADD ZED
+DIV TEE
+STORE VEE
+OUT VEE
+BR DONE
+DONE: STOP
+TEE: DC 3

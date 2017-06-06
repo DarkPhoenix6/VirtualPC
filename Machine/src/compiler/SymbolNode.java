@@ -148,10 +148,10 @@ public class SymbolNode {
 	 */
 	@Override
 	public String toString() {
-		return String.format("Node: %s\n"
-				+ "Location: %s\n"
-				+ "Initial Value: %s\n"
-				+ "\n", name, getLocation(), getValue());
+		return String.format("Node: %s \n"
+				+ "Location: %s \n"
+				+ "Initial Value: %s \n"
+				+ " \n", name, getLocation(), getValue());
 	}
 	
 	

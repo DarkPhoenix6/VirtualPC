@@ -13,7 +13,7 @@ import java.util.NoSuchElementException;
 
 /**
  * @class	WriteFile
- * @author 	Chris 
+ * @author 	Chris Fedun
  * @date	Jun 3, 2017
  *
  */
@@ -83,6 +83,33 @@ public class WriteFile implements Write {
 					output.format("%s", Str[a++]);
 				}
 				
+			}
+		}
+		catch ( FormatterClosedException formatterClosedException )
+        {
+           System.err.println( "Error writing to file." );
+           return;
+        } // end catch
+        catch ( NoSuchElementException elementException )
+        {
+           System.err.println( "Invalid input. Please try again." );
+           //input.nextLine(); // discard input so user can try again
+        } // end catch
+	}
+
+
+	/**
+	 * @param string
+	 */
+	public void writeFile(String string) {
+		// TODO Auto-generated method stub
+		try
+		{
+			int a = 0;
+			String[] splitString = string.split("\n");
+			while ( a < splitString.length )
+			{
+				output.format("%s%s", splitString[a++], newline);
 			}
 		}
 		catch ( FormatterClosedException formatterClosedException )

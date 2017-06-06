@@ -5,6 +5,8 @@
  */
 package machine;
 
+
+
 /**
  * @class	MachineDriver
  * @author 	Chris 
@@ -13,6 +15,7 @@ package machine;
  */
 public class MachineDriver {
 
+	
 	/**
 	 * @param args
 	 * @throws NullPointerException 
@@ -22,7 +25,8 @@ public class MachineDriver {
 	 */
 	public static void main(String[] args) throws RuntimeException, NullPointerException, Invalid {
 		// TODO Auto-generated method stub
-		Computer MYPC = new Computer();
+		
+		Computer MYPC = new Computer( args );
 		MYPC.RunProgram();
 		//MYPC.run();
 	}

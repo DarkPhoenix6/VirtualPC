@@ -1,0 +1,32 @@
+SymbolTableList 
+Avail= 97 
+count= 2 
+ 
+Node: HEADNODE 
+Location: 0 
+Initial Value: null 
+ 
+Node: TOP 
+Location: 1 
+Initial Value: null 
+ 
+Node: BIGX 
+Location: 8 
+Initial Value: null 
+ 
+Node: DONE 
+Location: 9 
+Initial Value: null 
+ 
+Node: ECKS 
+Location: 99 
+Initial Value: +00010 
+ 
+Node: WHY 
+Location: 98 
+Initial Value: -00009 
+ 
+Node: DATACONTROL 
+Location: 12 
+Initial Value: null 
+ 

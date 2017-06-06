@@ -17,8 +17,6 @@ public class SymbolTableList {
 	private SymbolNode last;
 	private int Avail;
 	int count;
-
-	private STOPJOB stop;
 	
 	public SymbolTableList()
 	{
@@ -124,7 +122,6 @@ public class SymbolTableList {
 		String[] postDCString = addDataControl( Str );
 		int i = 0;
 		int arrPlace = 0;
-		String test = new String( "STOP");
 		int[] arr = new int[postDCString.length];
 		//TODO check for DCs And inject Stores at top of list
 		for ( String S : postDCString)
@@ -328,9 +325,9 @@ public class SymbolTableList {
 	@Override
 	public String toString() {
 		return String.format("SymbolTableList \n"
-				+ "Avail= %s\n"
-				+ "count= %s\n"
-				+ "\n"
+				+ "Avail= %s \n"
+				+ "count= %s \n"
+				+ " \n"
 				+ "%s", Avail, count, printTable());
 	}
 
