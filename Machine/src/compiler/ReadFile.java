@@ -73,10 +73,10 @@ public class ReadFile implements Read {
 		}
 		//System.out.println(Str);
 		String[] instructions = removeComments(Str);
-		for ( String S: instructions)
+		/*for ( String S: instructions)
 		{
 			System.out.println(S);
-		}
+		}*/
 		return instructions;
 	}
 

@@ -160,7 +160,7 @@ public class SymbolTableList {
 			}
 		}
 		String[] tempString = temp.split("\\s");
-		String[] returnString = new String[ (tempString.length / 2) + 1];
+		String[] preReturnString = new String[ (tempString.length / 2) + 1];
 		int a = 0;
 		int returnCount = 0;
 		while ( a < tempString.length -2  )
@@ -171,19 +171,53 @@ public class SymbolTableList {
 				
 			if (  tempString[a].contains("STOP") )
 			{
-				returnString[ returnCount++ ] = tempString[a++];
+				preReturnString[ returnCount++ ] = tempString[a++];
 			}
 			else
 			{
-				returnString[ returnCount++ ] = tempString[a++] + " " + tempString[a++];
+				preReturnString[ returnCount++ ] = tempString[a++] + " " + tempString[a++];
 			}
 		
 			
 			
 		}
-		returnString[returnCount] = new String("BR TOP");
-		return returnString;
 		
+		
+		preReturnString[returnCount] = new String("BR TOP");
+		generateVariables(preReturnString);
+		return preReturnString;
+		
+	}
+
+	/**
+	 * @param preReturnString
+	 */
+	private void generateVariables(String[] string) {
+		// TODO Auto-generated method stub
+
+		for ( String S : string )
+		{
+			
+			if ( S.split("\\s").length > 1 )
+			{
+				if (S.regionMatches(0, "DC", 0, 2))
+				{
+					continue;
+				}
+				else if ( isInt(S.split("\\s")[1] ) )
+				{
+					continue;
+				}
+				else if ( ! symbolExists(S.split("\\s")[1]))
+				{
+					generateNode( S.split("\\s")[1] + ":", getAvail());
+					this.decAvail();
+				}
+				
+			}
+		
+			
+		}
 	}
 
 	/**
@@ -259,7 +293,7 @@ public class SymbolTableList {
 			}
 			
 			postDCString[postDCString.length - 1] = TOP;
-			System.out.println(postDCString.length);
+			//System.out.println(postDCString.length);
 			return postDCString;
 		}
 		else
@@ -286,6 +320,24 @@ public class SymbolTableList {
 		}
 	}
 
+	/**
+	 * @param string
+	 * @return
+	 */
+	@SuppressWarnings("unused")
+	private boolean isInt(String string) {
+		// TODO Auto-generated method stub
+		try
+		{
+			int i = Integer.valueOf(string);
+			return true;
+		}
+		catch (NumberFormatException NFE)
+		{
+			return false;
+		}
+	}
+	
 	/**
 	 * @param name
 	 * @return
@@ -319,12 +371,32 @@ public class SymbolTableList {
 
 	}
 
+	boolean symbolExists(String name)
+	{
+		SymbolNode saveSpot = getLast();
+		setLast(this.getSTLHead());
+		boolean exists = false;
+		while ( getLast() != null )
+		{
+		
+			if ( getLast().getName().equals(name))
+			{
+				exists = true;
+				
+				break;
+			}
+			this.iterateLast();
+		}
+		
+		setLast( saveSpot );
+		return exists;
+	}
 	/* (non-Javadoc)
 	 * @see java.lang.Object#toString()
 	 */
 	@Override
 	public String toString() {
-		return String.format("SymbolTableList \n"
+		return String.format("SymbolTable \n"
 				+ "Avail= %s \n"
 				+ "count= %s \n"
 				+ " \n"

@@ -168,7 +168,10 @@ public class Computer {
 	 */
 	private void dump() {
 		// TODO Auto-generated method stub
-		System.out.print(this.toString());
+		System.out.print( this.toString() );
+		compiler.getWrite().openFile( "dump.txt" );
+		compiler.getWrite().writeFile( this.toString() );
+		compiler.getWrite().closeFile();
 	}
 
 	/**

@@ -1,4 +1,4 @@
-SymbolTableList 
+SymbolTable 
 Avail= 97 
 count= 2 
  

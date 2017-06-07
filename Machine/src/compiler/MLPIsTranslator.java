@@ -45,6 +45,7 @@ public class MLPIsTranslator {
 	
 	public String[] translate( String[] instructionsList, SymbolTableList SymbolTable )
 	{
+		System.out.println(SymbolTable.toString());
 		String Str = null;
 		for ( String S: instructionsList)
 		{
@@ -58,18 +59,19 @@ public class MLPIsTranslator {
 			}
 		}
 		String[] instructions = Str.split("\\s");		
-		String[] returnString = new String[instructions.length / 2];
+		String[] returnString = new String[ 1 + (instructions.length / 2) ];
 		boolean addTwo = true;
-	
+		int a = 0;
 		for ( int i = 0; i < instructions.length - 1; )
 		{
 			addTwo = true;
 
 			if ( instructions[i].contains("STOP") )
 			{
-				returnString[i / 2] = new String( String.valueOf( STOP ) );
+				returnString[a] = new String( String.valueOf( STOP ) );
 				addTwo = false;
 				i++;
+				a++;
 			}
 			
 			if ( instructions[i].contains("LOAD") || instructions[i].contains("LD") )
@@ -77,11 +79,11 @@ public class MLPIsTranslator {
 				if ( isInt( instructions[i + 1] ) )//TODO: if instructions[i + 1] is a integer 	then
 					//			returnString[i / 2] = new String( String.valueOf(MULTIPLY + instructions[i + 1] ) );
 				{
-					returnString[i / 2] = new String( String.valueOf(LOAD + Integer.valueOf(instructions[i + 1] ) ) );
+					returnString[ a ] = new String( String.valueOf(LOAD + Integer.valueOf(instructions[i + 1] ) ) );
 				}
 				else
 				{
-					returnString[i / 2] = new String( String.valueOf(LOAD + SymbolTable.getLocation(instructions[i + 1] )) );
+					returnString[a] = new String( String.valueOf(LOAD + SymbolTable.getLocation(instructions[i + 1] )) );
 				}
 			}
 		
@@ -89,27 +91,27 @@ public class MLPIsTranslator {
 		
 			if (instructions[i].contains("STORE") || instructions[i].contains("STOR") )
 			{
-				returnString[i / 2] = new String( String.valueOf(STORE + SymbolTable.getLocation(instructions[i + 1] )) );
+				returnString[a] = new String( String.valueOf(STORE + SymbolTable.getLocation(instructions[i + 1] )) );
 			}
 		
 		
 
 			if ( instructions[i].contains("ADD") )
 			{
-				returnString[i / 2] = new String( String.valueOf(ADD + SymbolTable.getLocation(instructions[i + 1] )) );
+				returnString[a] = new String( String.valueOf(ADD + SymbolTable.getLocation(instructions[i + 1] )) );
 			}
 		
 					
 		
 			if ( instructions[i].contains("SUB") )
 			{
-				returnString[i / 2] = new String( String.valueOf(SUBTRACT + SymbolTable.getLocation(instructions[i + 1] )) );
+				returnString[a] = new String( String.valueOf(SUBTRACT + SymbolTable.getLocation(instructions[i + 1] )) );
 			}
 		
 		
 			if ( instructions[i].contains("MULT") )
 			{
-				returnString[i / 2] = new String( String.valueOf(MULTIPLY + SymbolTable.getLocation(instructions[i + 1] )) );
+				returnString[a] = new String( String.valueOf(MULTIPLY + SymbolTable.getLocation(instructions[i + 1] )) );
 			}
 		
 		
@@ -117,42 +119,42 @@ public class MLPIsTranslator {
 		
 			if ( instructions[i].contains("DIV") )
 			{
-				returnString[i / 2] = new String( String.valueOf(DIVIDE + SymbolTable.getLocation(instructions[i + 1] )) );
+				returnString[a] = new String( String.valueOf(DIVIDE + SymbolTable.getLocation(instructions[i + 1] )) );
 			}
 		
 		
 		
 			if ( instructions[i].contains("IN") )
 			{
-				returnString[i / 2] = new String( String.valueOf(INPUT + SymbolTable.getLocation(instructions[i + 1] )) );
+				returnString[a] = new String( String.valueOf(INPUT + SymbolTable.getLocation(instructions[i + 1] )) );
 			}
 		
 					
 		
 			if ( instructions[i].contains("OUT") )
 			{
-				returnString[i / 2] = new String( String.valueOf(OUTPUT + SymbolTable.getLocation(instructions[i + 1] )) );
+				returnString[a] = new String( String.valueOf(OUTPUT + SymbolTable.getLocation(instructions[i + 1] )) );
 			}
 		
 		
 		
 			if ( instructions[i].contains("BR") )
 			{
-				returnString[i / 2] = new String( String.valueOf(BRANCH + SymbolTable.getLocation(instructions[i + 1] )) );
+				returnString[a] = new String( String.valueOf(BRANCH + SymbolTable.getLocation(instructions[i + 1] )) );
 			}
 		
 		
 
 			if ( instructions[i].contains("BRIF0") )
 			{
-				returnString[i / 2] = new String( String.valueOf(BRANCHif0 + SymbolTable.getLocation(instructions[i + 1] )) );
+				returnString[a] = new String( String.valueOf(BRANCHif0 + SymbolTable.getLocation(instructions[i + 1] )) );
 			}
 		
 		
 	
 			if ( instructions[i].contains("BRGTR") || instructions[i].contains("BGTR"))
 			{
-				returnString[i / 2] = new String( String.valueOf(BRANCHifGTR0 + SymbolTable.getLocation(instructions[i + 1] )) );
+				returnString[a] = new String( String.valueOf(BRANCHifGTR0 + SymbolTable.getLocation(instructions[i + 1] )) );
 			}
 		
 					
@@ -160,13 +162,14 @@ public class MLPIsTranslator {
 		
 			if ( instructions[i].contains("DC") )
 			{
-				returnString[i / 2] = instructions[i+1];
+				returnString[a] = instructions[i+1];
 			}
 			
 			
 			if ( addTwo == true )
 			{
 				i += 2;
+				a++;
 			}
 		}
 		

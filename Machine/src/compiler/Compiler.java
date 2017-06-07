@@ -46,8 +46,11 @@ public class Compiler {
 		read.closeFile();
 		write.closeFile();
 		read.openFile("InstructionsWritten.txt");
+		write.openFile("MLPInstructions.txt");
 		String[] MLPInstructions = translate.translate( read.getInstructions(), SymbolTable );
+		write.writeFile(MLPInstructions);
 		read.closeFile();
+		write.closeFile();
 		return MLPInstructions;
 		
 	}
@@ -90,6 +93,34 @@ public class Compiler {
 		write.writeFile(SymbolTable.toString());
 		write.closeFile();
 		
+	}
+
+	/**
+	 * @return the read
+	 */
+	public ReadFile getRead() {
+		return read;
+	}
+
+	/**
+	 * @return the write
+	 */
+	public WriteFile getWrite() {
+		return write;
+	}
+
+	/**
+	 * @param read the read to set
+	 */
+	public void setRead(ReadFile read) {
+		this.read = read;
+	}
+
+	/**
+	 * @param write the write to set
+	 */
+	public void setWrite(WriteFile write) {
+		this.write = write;
 	}
 
 	/* (non-Javadoc)
