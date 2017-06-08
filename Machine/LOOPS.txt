@@ -26,3 +26,13 @@ STORE X
 LD V
 SUB X
 BGTR LOOP1
+
+
+
+LOOP: LD X
+ADD W
+STO X
+.
+.
+.
+BR LOOP

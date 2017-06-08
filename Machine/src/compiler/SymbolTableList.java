@@ -104,9 +104,12 @@ public class SymbolTableList {
 	
 	public void insertAtEnd( String name, short location, short Value)
 	{
-		last.setNext( new SymbolNode( name, (short) getAvail(), Value ) );
-		decAvail();
-		iterateLast();
+		if ( ! symbolExists( name ) )
+		{
+			last.setNext( new SymbolNode( name, (short) getAvail(), Value ) );
+			decAvail();
+			iterateLast();
+		}
 	}
 	
 	/**
@@ -185,6 +188,7 @@ public class SymbolTableList {
 		
 		preReturnString[returnCount] = new String("BR TOP");
 		generateVariables(preReturnString);
+		String[] returnString = generateConstants(preReturnString);
 		return preReturnString;
 		
 	}
@@ -195,9 +199,10 @@ public class SymbolTableList {
 	private void generateVariables(String[] string) {
 		// TODO Auto-generated method stub
 
+		int i = -1;
 		for ( String S : string )
 		{
-			
+			i++;
 			if ( S.split("\\s").length > 1 )
 			{
 				if (S.regionMatches(0, "DC", 0, 2))
@@ -215,7 +220,13 @@ public class SymbolTableList {
 				}
 				
 			}
+			
+			else if ( isInt( S ) )
+			{
+				generateNode( S + ": " + S, i );
+			}
 		
+			
 			
 		}
 	}
@@ -237,6 +248,7 @@ public class SymbolTableList {
 		int[] arr = new int[preDC.length]; 
 		for ( String instruction: preDC )
 		{
+			//TODO: use constants
 			
 			//String substring = instruction[0].substring(0, instruction[].length() - 1);
 			if ( instruction.contains(": DC") || instruction.contains(": dc"))
@@ -294,12 +306,23 @@ public class SymbolTableList {
 			
 			postDCString[postDCString.length - 1] = TOP;
 			//System.out.println(postDCString.length);
+			generateConstants( postDCString );
 			return postDCString;
 		}
 		else
 		{
+			generateConstants( preDC );
 			return preDC;
 		}
+	}
+
+	/**
+	 * @param postDCString
+	 * @return 
+	 */
+	private String[] generateConstants(String[] instructions) {
+		// TODO insert constants
+		return null
 	}
 
 	/**
@@ -313,11 +336,17 @@ public class SymbolTableList {
 		if ( lable.contains(": DC") || lable.contains(": dc"))
 		{
 			insertAtEnd( substring, (short) location, Short.valueOf(instruction[2]) );
+			generateNode( instruction[2] + ": " + instruction[2], location );
+		}
+		else if ( isInt(substring ) )
+		{
+			insertAtEnd( substring, (short) location, Short.valueOf(instruction[2]) );
 		}
 		else 
 		{
 			insertAtEnd( substring, (short) location );
 		}
+		
 	}
 
 	/**

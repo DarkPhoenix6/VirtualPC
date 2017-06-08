@@ -43,6 +43,7 @@ public class MLPIsTranslator {
 		
 	}
 	
+	
 	public String[] translate( String[] instructionsList, SymbolTableList SymbolTable )
 	{
 		System.out.println(SymbolTable.toString());
@@ -89,7 +90,7 @@ public class MLPIsTranslator {
 		
 		
 		
-			if (instructions[i].contains("STORE") || instructions[i].contains("STOR") )
+			if (instructions[i].contains("STORE") || instructions[i].contains("STOR") || instructions[i].contains("STO") )
 			{
 				returnString[a] = new String( String.valueOf(STORE + SymbolTable.getLocation(instructions[i + 1] )) );
 			}
