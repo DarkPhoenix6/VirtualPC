@@ -22,9 +22,17 @@ Node: ECKS
 Location: 99 
 Initial Value: +00010 
  
+Node: 10 
+Location: 10 
+Initial Value: null 
+ 
 Node: WHY 
 Location: 98 
 Initial Value: -00009 
+ 
+Node: -9 
+Location: 11 
+Initial Value: null 
  
 Node: DATACONTROL 
 Location: 12 

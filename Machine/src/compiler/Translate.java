@@ -78,15 +78,10 @@ public class Translate {
 			
 			if ( instructions[i].contains("LOAD") || instructions[i].contains("LD") )
 			{
-				if ( isInt( instructions[i + 1] ) )//TODO: if instructions[i + 1] is a integer 	then
-					//			returnString[i / 2] = new String( String.valueOf(MULTIPLY + instructions[i + 1] ) );
-				{
-					returnString[ a ] = new String( String.valueOf(LOAD + Integer.valueOf(instructions[i + 1] ) ) );
-				}
-				else
-				{
-					returnString[a] = new String( String.valueOf(LOAD + SymbolTable.getLocation(instructions[i + 1] )) );
-				}
+				
+				
+				returnString[a] = new String( String.valueOf(LOAD + SymbolTable.getLocation(instructions[i + 1] )) );
+				
 			}
 		
 		
@@ -282,7 +277,8 @@ public class Translate {
 	{
 		String[] temp = translateLoops( instructions );
 		temp = getMath( temp );
-		temp = getIfStatments( temp );
+		//return temp;
+		//temp = getIfStatments( temp );
 		return getAssignments( temp );
 	}
 
@@ -565,44 +561,61 @@ public class Translate {
 		else if ( instruction.contains(" = ") && isChecked )
 		{
 			String[] temp =  instruction.split("\\s=\\s");
-			return translateMathSymbols( temp[1], true) + " \n" + STO + translateMathSymbols( temp[0], true);
+			return translateMathSymbols( temp[1], true) + STO + translateMathSymbols( temp[0], true);
 		}
 		
 		else if ( instruction.contains(" * ") || instruction.contains(" / ") )
 		{
-			if ( instruction.indexOf("*") > instruction.indexOf("/") )
+			if ( ! instruction.contains(" = ") )
 			{
-				String[] temp =  instruction.split("\\s\\*\\s", 1);
-				return LD + translateMathSymbols( temp[0], true ) + " \n" + MULT + translateMathSymbols( temp[1], true );
+				if ( instruction.indexOf("*") > instruction.indexOf("/") )
+				{
+					String[] temp =  instruction.split("\\s\\*\\s", 2);
+					return LD + translateMathSymbols( temp[0], true ) + MULT + translateMathSymbols( temp[1], true );
+				}
+				else
+				{
+					String[] temp =  instruction.split("\\s/\\s", 2);
+					return LD + translateMathSymbols( temp[0], true ) + DIV + translateMathSymbols( temp[1], true );
+				}
 			}
 			else
 			{
-				String[] temp =  instruction.split("\\s/\\s", 1);
-				return LD + translateMathSymbols( temp[0], true ) + " \n" + DIV + translateMathSymbols( temp[1], true );
+					String[] temp =  instruction.split("\\s=\\s", 2);
+					return translateMathSymbols( temp[1], true ) + STO + translateMathSymbols( temp[0], true );	
 			}
 		}
 		else if ( instruction.contains(" + ") || instruction.contains(" + ") )
 		{
-			if ( instruction.indexOf("+") > instruction.indexOf("-") )
+			if ( ! instruction.contains(" = ") )
 			{
-				String[] temp =  instruction.split("\\s\\+\\s", 1);
-				return LD + translateMathSymbols( temp[0], true ) + " \n" + ADD + translateMathSymbols( temp[1], true );
+				if ( instruction.indexOf("+") > instruction.indexOf("-") )
+				{
+					String[] temp =  instruction.split("\\s\\+\\s", 2);
+					return LD + translateMathSymbols( temp[0], true ) + ADD + translateMathSymbols( temp[1], true );
+				}
+				else
+				{
+					String[] temp =  instruction.split("\\s\\-\\s", 2);
+					return LD + translateMathSymbols( temp[0], true ) + SUB + translateMathSymbols( temp[1], true );
+				}
 			}
 			else
 			{
-				String[] temp =  instruction.split("\\s\\-\\s", 1);
-				return LD + translateMathSymbols( temp[0], true ) + " \n" + SUB + translateMathSymbols( temp[1], true );
+				String[] temp =  instruction.split("\\s=\\s", 2);
+				return translateMathSymbols( temp[1], true ) + STO + translateMathSymbols( temp[0], true );	
 			}
 		}
 		
 		else
 		{
-			return instruction;
+			return instruction + " \n";
 		}
 	}
 	
 	public String[] translateLogicSymbols( String instruction, String loopContinue, String loopReturn )
 	{
+		//TODO
 		String[] returnString = null;
 		return returnString;
 	}
@@ -649,14 +662,14 @@ public class Translate {
 		//TODO
 		String ifString = null;
 		incIfCount();
-		return ifString;
+		return instruction;
 	}
 	
 	/**
 	 * @param returnString
 	 * @param i
 	 * @param b
-	 * @return
+	 * @return returns the instruction Set with logic expressions translate
 	 */
 	private String[] getIfStatments(String[] instructions) {
 

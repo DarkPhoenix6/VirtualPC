@@ -131,7 +131,7 @@ public class SymbolTableList {
 		{
 			if ( S.contains(":") )
 			{
-				generateNode( S, i );
+				generateNode( S, i, getAvail() );
 				arr[arrPlace] = i;
 				arrPlace++;
 				i++;
@@ -163,7 +163,16 @@ public class SymbolTableList {
 			}
 		}
 		String[] tempString = temp.split("\\s");
-		String[] preReturnString = new String[ (tempString.length / 2) + 1];
+		String[] preReturnString = null;
+		if ( tempString.length % 2 == 0 )
+		{
+		
+			preReturnString = new String[ (tempString.length / 2)];
+		}
+		else
+		{
+			preReturnString = new String[ (tempString.length / 2) + 1];
+		}
 		int a = 0;
 		int returnCount = 0;
 		while ( a < tempString.length -2  )
@@ -189,7 +198,7 @@ public class SymbolTableList {
 		preReturnString[returnCount] = new String("BR TOP");
 		generateVariables(preReturnString);
 		String[] returnString = generateConstants(preReturnString);
-		return preReturnString;
+		return returnString;
 		
 	}
 
@@ -209,13 +218,13 @@ public class SymbolTableList {
 				{
 					continue;
 				}
-				else if ( isInt(S.split("\\s")[1] ) )
+				else if ( isInt(S.split("\\s")[1] ) && ! symbolExists(S.split("\\s")[1]) )
 				{
 					continue;
 				}
 				else if ( ! symbolExists(S.split("\\s")[1]))
 				{
-					generateNode( S.split("\\s")[1] + ":", getAvail());
+					generateNode( S.split("\\s")[1] + ":", i, getAvail());
 					this.decAvail();
 				}
 				
@@ -223,7 +232,7 @@ public class SymbolTableList {
 			
 			else if ( isInt( S ) )
 			{
-				generateNode( S + ": " + S, i );
+				generateNode( S + ": " + S, i, getAvail() );
 			}
 		
 			
@@ -253,14 +262,16 @@ public class SymbolTableList {
 			//String substring = instruction[0].substring(0, instruction[].length() - 1);
 			if ( instruction.contains(": DC") || instruction.contains(": dc"))
 			{
+				
 				String substring = instruction.substring(0, instruction.indexOf(":"));
+				String[] constants = instruction.split("\\s");
 				if ( tempPlace == 0 )
 				{
-					temp[tempPlace] = new String( "DATACONTROL: LD " + (place + 1) );
+					temp[tempPlace] = new String( "DATACONTROL: LD " + constants[2] );
 				}
 				else
 				{
-					temp[tempPlace] = new String( "LD " + (place + 1) );
+					temp[tempPlace] = new String( "LD " + constants[2] );
 				}
 				
 				tempPlace++;
@@ -322,26 +333,26 @@ public class SymbolTableList {
 	 */
 	private String[] generateConstants(String[] instructions) {
 		// TODO insert constants
-		return null
+		return instructions;
 	}
 
 	/**
 	 * @param s
 	 * @param i
 	 */
-	private void generateNode(String lable, int location) {
+	private void generateNode(String lable, int location, int avail) {
 		// TODO Auto-generated method stub
 		String[] instruction = lable.split("\\s");
 		String substring = instruction[0].substring(0, instruction[0].length() - 1);
 		if ( lable.contains(": DC") || lable.contains(": dc"))
 		{
-			insertAtEnd( substring, (short) location, Short.valueOf(instruction[2]) );
-			generateNode( instruction[2] + ": " + instruction[2], location );
+			insertAtEnd( substring, (short) avail, Short.valueOf(instruction[2]) );
+			generateNode( instruction[2] + ": " + instruction[2], location, avail );
 		}
-		else if ( isInt(substring ) )
+		/*else if ( isInt(substring ) )
 		{
-			insertAtEnd( substring, (short) location, Short.valueOf(instruction[2]) );
-		}
+			insertAtEnd( substring, (short) location, Short.valueOf(instruction[1]) );
+		}*/
 		else 
 		{
 			insertAtEnd( substring, (short) location );

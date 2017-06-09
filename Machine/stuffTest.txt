@@ -1,0 +1,8 @@
+A = 3
+B = 2
+C = A + B
+IN D
+OUT C
+OUT D
+D += C
+OUT D

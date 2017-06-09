@@ -59,7 +59,7 @@ public class Compiler {
 	 */
 	public static void main(String[] args) {
 		// TODO Auto-generated method stub
-		
+		Translate t;
 		SymbolTableList SymbolTable;
 		ReadFile read;
 		WriteFile write;
@@ -69,23 +69,38 @@ public class Compiler {
 		read = new ReadFile();
 		write = new WriteFile();
 		translate = new MLPIsTranslator();
-
+		t = new Translate();
 
 		SymbolTable = new SymbolTableList();
-		read.openFile("ToBeCompiled.txt");
-		write.openFile();
-		String[] toWrite = SymbolTable.generateSymbolTable(read.getInstructions());
-		write.writeFile(toWrite);
+		read.openFile("stuffTest.txt");
+		//read.openFile("ToBeCompiled.txt");
+		String[] preTrans = read.getInstructions();
 		read.closeFile();
+//		for (String string : preTrans) {
+//			System.out.println(string);
+//		}
+		
+		String[] trans = t.translate(preTrans);
+		for (String string : trans) {
+			System.out.println(string);
+
+		}
+		write.openFile();
+		String[] toWrite = SymbolTable.generateSymbolTable(trans);
+		
+//		String[] toWrite = SymbolTable.generateSymbolTable(read.getInstructions());
+		write.writeFile(toWrite);
+//		read.closeFile();
 		write.closeFile();
 		read.openFile("InstructionsWritten.txt");
-/*		String[] test = read.getInstructions();
-		for ( String S : test )
-		{
-			System.out.println(S);
-		}*/
+///*		String[] test = read.getInstructions();
+//		for ( String S : test )
+//		{
+//			System.out.println(S);
+//		}*/
 		write.openFile("MLPInstructions.txt");
-		String[] MLPInstructions = translate.translate( read.getInstructions(), SymbolTable );
+		//String[] MLPInstructions = translate.translate( read.getInstructions(), SymbolTable );
+		String[] MLPInstructions = t.translateToAssemblyCode( read.getInstructions(), SymbolTable );
 		write.writeFile(MLPInstructions);
 		read.closeFile();
 		write.closeFile();
