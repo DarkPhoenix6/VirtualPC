@@ -135,19 +135,36 @@ public class SymbolTableList {
 				arr[arrPlace] = i;
 				arrPlace++;
 				i++;
+				S += " \n";
 			}
 			else
 			{
 				i++;
+				S += " \n";
 			}
 			
 		}
 		
+		String[] preReturnString = removeLables(postDCString);
+		
+		
+//		preReturnString[returnCount] = new String("BR TOP");
+		generateVariables(preReturnString);
+		String[] returnString = generateConstants(preReturnString);
+		return returnString;
+		
+	}
+
+	/**
+	 * @param postDCString
+	 * @return
+	 */
+	private String[] removeLables(String[] postDCString) {
 		String temp = null;
 		
 		for ( String ST : postDCString )
 		{
-			for ( String S : ST.split("\\s") )
+			for ( String S : ST.split("\\s\n") )
 			{
 				if ( ! S.contains(":") )
 				{
@@ -157,49 +174,28 @@ public class SymbolTableList {
 					}
 					else
 					{
-						temp += " " + S;
+						temp += " \n" + S;
+					}
+				}
+				else
+				{
+					
+					
+					if ( temp == null )
+					{
+						temp = S.substring(S.indexOf(":") + 1);
+					}
+					else
+					{
+						temp += " \n" + S.substring(S.indexOf(":") + 1);
 					}
 				}
 			}
 		}
-		String[] tempString = temp.split("\\s");
-		String[] preReturnString = null;
-		if ( tempString.length % 2 == 0 )
-		{
+		 
+		String[] preReturnString = temp.split("\\s\n");
 		
-			preReturnString = new String[ (tempString.length / 2)];
-		}
-		else
-		{
-			preReturnString = new String[ (tempString.length / 2) + 1];
-		}
-		int a = 0;
-		int returnCount = 0;
-		while ( a < tempString.length -2  )
-		{
-			
-
-			
-				
-			if (  tempString[a].contains("STOP") )
-			{
-				preReturnString[ returnCount++ ] = tempString[a++];
-			}
-			else
-			{
-				preReturnString[ returnCount++ ] = tempString[a++] + " " + tempString[a++];
-			}
-		
-			
-			
-		}
-		
-		
-		preReturnString[returnCount] = new String("BR TOP");
-		generateVariables(preReturnString);
-		String[] returnString = generateConstants(preReturnString);
-		return returnString;
-		
+		return preReturnString;
 	}
 
 	/**
@@ -218,15 +214,11 @@ public class SymbolTableList {
 				{
 					continue;
 				}
-				else if ( isInt(S.split("\\s")[1] ) && ! symbolExists(S.split("\\s")[1]) )
-				{
-					continue;
-				}
-				else if ( ! symbolExists(S.split("\\s")[1]))
+				else if ( ! isInt(S.split("\\s")[1] ) && ! symbolExists(S.split("\\s")[1]) )
 				{
 					generateNode( S.split("\\s")[1] + ":", i, getAvail());
-					this.decAvail();
 				}
+			
 				
 			}
 			
@@ -234,6 +226,8 @@ public class SymbolTableList {
 			{
 				generateNode( S + ": " + S, i, getAvail() );
 			}
+			
+			
 		
 			
 			
@@ -291,7 +285,7 @@ public class SymbolTableList {
 		if ( count > 0 )
 		{	
 		
-			String[] postDCString = new String[preDC.length + 2 + tempPlace ];
+			String[] postDCString = new String[preDC.length + 3 + tempPlace ];
 	
 			postDCString[0] = BR;
 			int postDCPlace = 1;
@@ -317,12 +311,11 @@ public class SymbolTableList {
 			
 			postDCString[postDCString.length - 1] = TOP;
 			//System.out.println(postDCString.length);
-			generateConstants( postDCString );
 			return postDCString;
 		}
 		else
 		{
-			generateConstants( preDC );
+			
 			return preDC;
 		}
 	}
@@ -333,7 +326,86 @@ public class SymbolTableList {
 	 */
 	private String[] generateConstants(String[] instructions) {
 		// TODO insert constants
-		return instructions;
+		
+		int i = -1;
+		String instructionString = null;
+		String constString = null;
+		for ( String S : instructions )
+		{
+			
+			if ( S.split("\\s").length > 1 )
+			{
+				if ( isInt(S.split("\\s")[1] ) && ! symbolExists(S.split("\\s")[1]) )
+				{
+					if ( instructionString == null )
+					{
+						instructionString = new String(S);
+					}
+					else
+					{
+						instructionString += " \n" + S ;
+					}
+					
+					if ( constString == null )
+					{
+						constString = new String(" \n" + S.split("\\s")[1] );
+					}
+					else
+					{
+						constString += " \n" + S.split("\\s")[1] ;
+					}
+					i++;
+					generateNode( S.split("\\s")[1] + ":", i + instructions.length , i + instructions.length );
+					
+				}
+				else
+				{
+					if ( instructionString == null )
+					{
+						instructionString = new String(S);
+					}
+					else
+					{
+						instructionString += " \n" + S ;
+					}
+				}
+				
+			}
+			else
+			{
+				if ( instructionString == null )
+				{
+					
+					if ( S.compareTo("EXIT") == 0)
+					{
+						instructionString = new String( "BR DONE" );
+					}
+					else
+					{
+						instructionString = new String(S);
+					}
+				}
+				else
+				{
+					if ( S.compareTo("EXIT") == 0)
+					{
+						instructionString += " \nBR DONE";
+					}
+					else
+					{
+						instructionString += " \n" + S ;
+					}
+				}
+			}
+
+		
+			
+			
+		}
+		String S = new String(instructionString + constString + " \nSTOP");
+		String[] returnString = S.split("\\s\n");
+		generateNode( "DONE: STOP", returnString.length - 1, returnString.length - 1 );
+		return returnString;
 	}
 
 	/**
@@ -349,10 +421,11 @@ public class SymbolTableList {
 			insertAtEnd( substring, (short) avail, Short.valueOf(instruction[2]) );
 			generateNode( instruction[2] + ": " + instruction[2], location, avail );
 		}
-		/*else if ( isInt(substring ) )
+		else if ( ! isInt(substring ) )
 		{
-			insertAtEnd( substring, (short) location, Short.valueOf(instruction[1]) );
-		}*/
+			insertAtEnd( substring, (short) avail );
+			decAvail();
+		}
 		else 
 		{
 			insertAtEnd( substring, (short) location );
@@ -387,9 +460,10 @@ public class SymbolTableList {
 		SymbolNode saveSpot = last;
 		setLast(getSTLHead());
 		int loc = -1;
-			
-		while ( getLast() != saveSpot && ! getLast().getName().contains(name) )
+		int t = 0;
+		while ( getLast() != saveSpot && ! ( getLast().getName().contains(name) && getLast().getName().equals(name)))
 		{
+			t++;
 			iterateLast();
 			if ( getLast().getName().contains(name))
 			{

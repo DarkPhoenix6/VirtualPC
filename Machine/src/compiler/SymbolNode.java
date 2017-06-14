@@ -5,8 +5,6 @@
  */
 package compiler;
 
-import machine.MemElem;
-
 /**
  * @class	SymbolNode
  * @author 	Chris Fedun
@@ -17,12 +15,12 @@ public class SymbolNode {
 
 	private SymbolNode next;
 	private short location;
-	private MemElem value;
+	private short value;
 	private String name;
 	
 	public SymbolNode( String Name)
 	{
-		this( Name, (short) 0, null, null);
+		this( Name, (short) 0, (short) 0, null);
 	}
 
 	
@@ -34,23 +32,8 @@ public class SymbolNode {
 	 * @param Next
 	 */
 	public SymbolNode( String Name, short Location ) {
-		this( Name, Location, null, null);
+		this( Name, Location, (short) 0, null);
 	}
-	
-	/**
-	 * 
-	 * @param Name
-	 * @param Location
-	 * @param Value
-	 * @param Next
-	 */
-	public SymbolNode( String Name, short Location, MemElem Value, SymbolNode Next) {
-		this.name = Name;
-		this.location = Location;
-		this.value = Value;
-		this.next = Next;
-	}
-	
 	
 	/**
 	 * 
@@ -62,9 +45,11 @@ public class SymbolNode {
 	public SymbolNode( String Name, short Location, short Value, SymbolNode Next) {
 		this.name = Name;
 		this.location = Location;
-		this.value = new MemElem(Value);
+		this.value = Value;
 		this.next = Next;
 	}
+	
+	
 
 	/**
 	 * 
@@ -75,7 +60,20 @@ public class SymbolNode {
 	public SymbolNode( String Name, short Location, short Value ) {
 		this.name = Name;
 		this.location = Location;
-		this.value = new MemElem(Value);
+		this.value = Value;
+		this.next = null;
+	}
+	
+	/**
+	 * 
+	 * @param Name
+	 * @param Location
+	 * @param Value
+	 */
+	public SymbolNode( String Name, short Location, int Value ) {
+		this.name = Name;
+		this.location = Location;
+		this.value = (short) Value;
 		this.next = null;
 	}
 
@@ -98,7 +96,7 @@ public class SymbolNode {
 	/**
 	 * @return the value
 	 */
-	public MemElem getValue() {
+	public short getValue() {
 		return value;
 	}
 
@@ -130,7 +128,7 @@ public class SymbolNode {
 	/**
 	 * @param value the value to set
 	 */
-	public void setValue(MemElem value) {
+	public void setValue(short value) {
 		this.value = value;
 	}
 

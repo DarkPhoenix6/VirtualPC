@@ -1,40 +1,36 @@
 SymbolTable 
-Avail= 97 
-count= 2 
+Avail= 94 
+count= 0 
  
 Node: HEADNODE 
 Location: 0 
-Initial Value: null 
+Initial Value: 0 
  
-Node: TOP 
-Location: 1 
-Initial Value: null 
+Node: A 
+Location: 99 
+Initial Value: 0 
  
-Node: BIGX 
-Location: 8 
-Initial Value: null 
+Node: B 
+Location: 98 
+Initial Value: 0 
+ 
+Node: C 
+Location: 97 
+Initial Value: 0 
+ 
+Node: D 
+Location: 96 
+Initial Value: 0 
+ 
+Node: 3 
+Location: 15 
+Initial Value: 0 
+ 
+Node: 2 
+Location: 16 
+Initial Value: 0 
  
 Node: DONE 
-Location: 9 
-Initial Value: null 
- 
-Node: ECKS 
-Location: 99 
-Initial Value: +00010 
- 
-Node: 10 
-Location: 10 
-Initial Value: null 
- 
-Node: WHY 
-Location: 98 
-Initial Value: -00009 
- 
-Node: -9 
-Location: 11 
-Initial Value: null 
- 
-Node: DATACONTROL 
-Location: 12 
-Initial Value: null 
+Location: 17 
+Initial Value: 0 
  

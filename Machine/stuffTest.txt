@@ -6,3 +6,4 @@ OUT C
 OUT D
 D += C
 OUT D
+EXIT

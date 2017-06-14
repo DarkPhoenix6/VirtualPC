@@ -61,52 +61,45 @@ public class Translate {
 			}
 		}
 		String[] instructions = Str.split("\\s");		
-		String[] returnString = new String[ 1 + (instructions.length / 2) ];
+		String[] returnString = new String[ instructionsList.length ];
 		boolean addTwo = true;
 		int a = 0;
-		for ( int i = 0; i < instructions.length - 1; )
+		for ( int i = 0; i < instructions.length; )
 		{
 			addTwo = true;
 
+	
+			
 			if ( instructions[i].contains("STOP") )
 			{
 				returnString[a] = new String( String.valueOf( STOP ) );
 				addTwo = false;
 				i++;
 				a++;
-			}
-			
-			if ( instructions[i].contains("LOAD") || instructions[i].contains("LD") )
+			}	
+			else if ( instructions[i].contains("LOAD") || instructions[i].contains("LD") )
 			{
 				
 				
 				returnString[a] = new String( String.valueOf(LOAD + SymbolTable.getLocation(instructions[i + 1] )) );
 				
 			}
-		
-		
-		
-			if (instructions[i].contains("STORE") || instructions[i].contains("STOR") || instructions[i].contains("STO") )
+			else if (instructions[i].contains("STORE") || instructions[i].contains("STOR") || instructions[i].contains("STO") )
 			{
 				returnString[a] = new String( String.valueOf(STORE + SymbolTable.getLocation(instructions[i + 1] )) );
 			}
-		
-		
-
-			if ( instructions[i].contains("ADD") )
+			else if ( instructions[i].contains("ADD") )
 			{
 				returnString[a] = new String( String.valueOf(ADD + SymbolTable.getLocation(instructions[i + 1] )) );
-			}
+			}		
 		
-					
-		
-			if ( instructions[i].contains("SUB") )
+			else if ( instructions[i].contains("SUB") )
 			{
 				returnString[a] = new String( String.valueOf(SUBTRACT + SymbolTable.getLocation(instructions[i + 1] )) );
 			}
 		
 		
-			if ( instructions[i].contains("MULT") )
+			else if ( instructions[i].contains("MULT") )
 			{
 				returnString[a] = new String( String.valueOf(MULTIPLY + SymbolTable.getLocation(instructions[i + 1] )) );
 			}
@@ -114,54 +107,57 @@ public class Translate {
 		
 		
 		
-			if ( instructions[i].contains("DIV") )
+			else if ( instructions[i].contains("DIV") )
 			{
 				returnString[a] = new String( String.valueOf(DIVIDE + SymbolTable.getLocation(instructions[i + 1] )) );
 			}
 		
 		
 		
-			if ( instructions[i].contains("IN") )
+			else if ( instructions[i].contains("IN") )
 			{
 				returnString[a] = new String( String.valueOf(INPUT + SymbolTable.getLocation(instructions[i + 1] )) );
 			}
 		
 					
 		
-			if ( instructions[i].contains("OUT") )
+			else if ( instructions[i].contains("OUT") )
 			{
 				returnString[a] = new String( String.valueOf(OUTPUT + SymbolTable.getLocation(instructions[i + 1] )) );
 			}
 		
 		
 		
-			if ( instructions[i].contains("BR") )
+			else if ( instructions[i].contains("BR") )
 			{
 				returnString[a] = new String( String.valueOf(BRANCH + SymbolTable.getLocation(instructions[i + 1] )) );
 			}
 		
 		
 
-			if ( instructions[i].contains("BRIF0") || instructions[i].contains("BZ") )
+			else if ( instructions[i].contains("BRIF0") || instructions[i].contains("BZ") )
 			{
 				returnString[a] = new String( String.valueOf(BRANCHif0 + SymbolTable.getLocation(instructions[i + 1] )) );
 			}
 		
 		
 	
-			if ( instructions[i].contains("BRGTR") || instructions[i].contains("BGTR"))
+			else if ( instructions[i].contains("BRGTR") || instructions[i].contains("BGTR"))
 			{
 				returnString[a] = new String( String.valueOf(BRANCHifGTR0 + SymbolTable.getLocation(instructions[i + 1] )) );
 			}
 		
-					
-
-		
-			if ( instructions[i].contains("DC") )
+			else if ( instructions[i].contains("DC") )
 			{
 				returnString[a] = instructions[i+1];
 			}
-			
+			else if( isInt(instructions[i]) )
+			{
+				returnString[a] = instructions[i];
+				addTwo = false;
+				i++;
+				a++;
+			}
 			
 			if ( addTwo == true )
 			{
@@ -257,6 +253,28 @@ public class Translate {
 	}
 
 
+	public String[] generateBinary( String[] instructions )
+	{
+	String[] instructionString = new String[ 100 ];
+		int i = 0;
+		short[] arr = new short[ instructions.length ];
+		for ( int j = 0; j < instructions.length; j++ )
+		{
+			arr[ j ] = Short.valueOf( instructions[ j ] );
+		}
+		
+		for ( ; i < instructions.length; i++ )
+		{
+			//instructionString[i] = Integer.toBinaryString( 0xFFFF & arr[i] );
+			instructionString[i] = Integer.toBinaryString( arr[i] );
+			instructionString[i] = "0000000000000000".substring(instructionString[i].length()) + instructionString[i];
+		}
+		for ( ; i < instructionString.length; i++ )
+		{
+			instructionString[i] = "0000000000000000";
+		}
+		return instructionString;
+	}
 	/**
 	 * @Description Decrement Avail
 	 */

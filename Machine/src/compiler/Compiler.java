@@ -106,8 +106,12 @@ public class Compiler {
 		write.closeFile();
 		write.openFile("SymbolTable.txt");
 		write.writeFile(SymbolTable.toString());
-		write.closeFile();
 		
+		write.closeFile();
+		String[] MLPInstructionsBinary = t.generateBinary( MLPInstructions );
+		write.openFile("BinaryMLPInstructions.txt");
+		write.writeFile(MLPInstructionsBinary);
+		write.closeFile();
 	}
 
 	/**
