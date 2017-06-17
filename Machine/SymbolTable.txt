@@ -1,36 +1,40 @@
 SymbolTable 
-Avail= 94 
-count= 0 
+Avail= 92 
+count= 16 
  
 Node: HEADNODE 
 Location: 0 
 Initial Value: 0 
  
-Node: A 
-Location: 99 
-Initial Value: 0 
- 
-Node: B 
-Location: 98 
-Initial Value: 0 
- 
-Node: C 
-Location: 97 
-Initial Value: 0 
- 
-Node: D 
-Location: 96 
-Initial Value: 0 
- 
-Node: 3 
+Node: DONE 
 Location: 15 
 Initial Value: 0 
  
-Node: 2 
-Location: 16 
+Node:  
+Location: 99 
 Initial Value: 0 
  
-Node: DONE 
-Location: 17 
+Node: A 
+Location: 98 
 Initial Value: 0 
+ 
+Node: B 
+Location: 97 
+Initial Value: 0 
+ 
+Node: C 
+Location: 96 
+Initial Value: 0 
+ 
+Node: D 
+Location: 95 
+Initial Value: 0 
+ 
+Node: PLUS3 
+Location: 94 
+Initial Value: 3 
+ 
+Node: PLUS2 
+Location: 93 
+Initial Value: 2 
  

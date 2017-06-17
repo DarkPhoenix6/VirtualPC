@@ -5,6 +5,8 @@
  */
 package compiler;
 
+import java.io.DataInputStream;
+import java.io.DataOutputStream;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.util.NoSuchElementException;
@@ -19,7 +21,7 @@ import java.util.Scanner;
 public class ReadFile implements Read {
 
 	private Scanner input;
-	
+	private DataInputStream binInput;
 	/**
 	 *  (non-Javadoc)
 	 * @see compiler.Read#openFile(java.lang.String)
@@ -168,6 +170,24 @@ public class ReadFile implements Read {
 	public void openFile() {
 		// TODO Auto-generated method stub
 		openFile("ToBeCompiled.txt");
+	}
+
+	/* (non-Javadoc)
+	 * @see compiler.Read#openBinaryFile()
+	 */
+	@Override
+	public void openBinaryFile() {
+		// TODO Auto-generated method stub
+		
+	}
+
+	/* (non-Javadoc)
+	 * @see compiler.Read#openBinaryFile(java.lang.String)
+	 */
+	@Override
+	public void openBinaryFile(String file) {
+		// TODO Auto-generated method stub
+		
 	}
 
 }

@@ -44,8 +44,14 @@ public class Translate {
 		ifCount = 0;
 	}
 	
-	
-	public String[] translateToAssemblyCode( String[] instructionsList, SymbolTableList SymbolTable )
+	/**
+	 * 
+	 * @param instructionsList
+	 * @param SymbolTable
+	 * @return The Assembly Code String[]
+	 * @throws InvalidCommandException 
+	 */
+	public String[] translateToAssemblyCode( String[] instructionsList, SymbolTableList SymbolTable ) throws InvalidCommandException
 	{
 		System.out.println(SymbolTable.toString());
 		String Str = null;
@@ -158,6 +164,11 @@ public class Translate {
 				i++;
 				a++;
 			}
+			else
+			{
+				InvalidCommandException ICE = new InvalidCommandException();
+				throw ICE;
+			}
 			
 			if ( addTwo == true )
 			{
@@ -253,9 +264,9 @@ public class Translate {
 	}
 
 
-	public String[] generateBinary( String[] instructions )
+	public String[] generateBinary( String[] instructions, SymbolTableList SymbolTable )
 	{
-	String[] instructionString = new String[ 100 ];
+		String[] instructionString = new String[ 100 ];
 		int i = 0;
 		short[] arr = new short[ instructions.length ];
 		for ( int j = 0; j < instructions.length; j++ )
@@ -269,11 +280,86 @@ public class Translate {
 			instructionString[i] = Integer.toBinaryString( arr[i] );
 			instructionString[i] = "0000000000000000".substring(instructionString[i].length()) + instructionString[i];
 		}
-		for ( ; i < instructionString.length; i++ )
+		
+		for ( ; i <= SymbolTable.getAvail(); i++ )
 		{
 			instructionString[i] = "0000000000000000";
 		}
+		String temp = SymbolTable.getDataControls();
+		
+		if ( temp != null )
+		{
+			String[] S = temp.split("\\s\n");
+			for ( String T : S )
+			{
+				String[] tem = T.split("\\s");
+				int[] arr2 = new int[2];
+				arr2[0] = Integer.valueOf( Short.valueOf( tem[0] ) );
+				arr2[1] = Integer.valueOf( Short.valueOf( tem[1] ) );
+				instructionString[arr2[0]] = Integer.toBinaryString( 0xFFFF & arr2[1] );
+				instructionString[arr2[0]] = "0000000000000000".substring(instructionString[arr2[0]].length()) + instructionString[arr2[0]];
+			}
+		}
+		
+		
 		return instructionString;
+	}
+	
+	public String[] generateExecutableString( String[] instructions, SymbolTableList SymbolTable )
+	{
+		String[] instructionString = new String[ 100 ];
+		int i = 0;
+		
+		
+		
+		for ( ; i < instructions.length; i++ )
+		{
+
+			instructionString[i] =  instructions[i];	
+		}
+		
+		for ( ; i <= SymbolTable.getAvail(); i++ )
+		{
+			instructionString[i] = "0";
+		}
+		String temp = SymbolTable.getDataControls();
+		
+		if ( temp != null )
+		{
+			String[] S = temp.split("\\s\n");
+			for ( String T : S )
+			{
+				String[] tem = T.split("\\s");
+				int[] arr2 = new int[2];
+				arr2[0] = Integer.valueOf( Short.valueOf( tem[0] ) );
+				arr2[1] = Integer.valueOf( Short.valueOf( tem[1] ) );
+				instructionString[arr2[0]] = Integer.toString( arr2[1] );
+
+			}
+		}
+		
+		
+		return instructionString;
+	}
+	
+	public short[] generateExecutableShort( String[] instructions )
+	{
+		short[] instructionShort = new short[ 100 ];
+		int i = 0;
+		
+		
+		
+		for ( ; i < instructions.length; i++ )
+		{
+
+			instructionShort[i] =  Short.valueOf( instructions[i] );	
+		}
+		
+	
+		
+		
+		
+		return instructionShort;
 	}
 	/**
 	 * @Description Decrement Avail
@@ -297,8 +383,15 @@ public class Translate {
 		temp = getMath( temp );
 		//return temp;
 		//temp = getIfStatments( temp );
+		//temp = getAssignments( temp );
 		return getAssignments( temp );
+		
+		
 	}
+
+		
+		
+
 
 	public String[] translateWhileLoop( String[] instructions, int whileSpot, int elihwSpot )
 	{
@@ -547,7 +640,7 @@ public class Translate {
 	
 	public String translateMathSymbols( String instruction, boolean isChecked )
 	{
-
+		
 		String STO = new String( "STO " );
 		String LD = new String( "LD " );
 		String ADD = new String( "ADD " );
@@ -678,6 +771,7 @@ public class Translate {
 	public String translateIfs( String instruction, boolean ANDFlag, boolean ORFlag )
 	{
 		//TODO
+		@SuppressWarnings("unused")
 		String ifString = null;
 		incIfCount();
 		return instruction;
@@ -689,6 +783,7 @@ public class Translate {
 	 * @param b
 	 * @return returns the instruction Set with logic expressions translate
 	 */
+	@SuppressWarnings("unused")
 	private String[] getIfStatments(String[] instructions) {
 
 		String temp = null;

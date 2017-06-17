@@ -5,6 +5,8 @@
  */
 package compiler;
 
+import java.io.IOException;
+
 /**
  * @class	Read
  * @author 	Chris Fedun
@@ -20,12 +22,16 @@ public interface Read {
 	public void openFile( String file );
 	public void openFile( );
 	/**
+	 * @throws IOException 
 	 * @Purpose To Close the file after Reading/Writing
 	 */
-	public void closeFile();
+	public void closeFile() throws IOException;
 	
 	public default String[] splitString(String Str, String Expression)
 	{
 		return Str.split(Expression);
 	}
+	
+	public void openBinaryFile();
+	public void openBinaryFile( String file );
 }

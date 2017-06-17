@@ -5,6 +5,8 @@
  */
 package compiler;
 
+import java.io.IOException;
+
 /**
  * @class	Compiler
  * @author 	Chris Fedun
@@ -18,7 +20,7 @@ public class Compiler {
 	protected SymbolTableList SymbolTable;
 	private ReadFile read;
 	private WriteFile write;
-
+    private Translate t;
 	private MLPIsTranslator translate;
 	
 
@@ -29,7 +31,7 @@ public class Compiler {
 		SymbolTable = new SymbolTableList();
 	}
 
-	public String[] compile( )
+	public String[] compile( ) throws OutOfMemoryException, IOException
 	{
 		String[] s = new String[1];
 		s[0] = new String( "ToBeCompiled.txt" );
@@ -37,7 +39,7 @@ public class Compiler {
 		
 	}
 	
-	public String[] compile( String[] args)
+	public String[] compile( String[] args) throws OutOfMemoryException, IOException
 	{
 		read.openFile( args[0] );
 		write.openFile( );
@@ -56,8 +58,11 @@ public class Compiler {
 	}
 	/**
 	 * @param args
+	 * @throws OutOfMemoryException 
+	 * @throws InvalidCommandException 
+	 * @throws IOException 
 	 */
-	public static void main(String[] args) {
+	public static void main(String[] args) throws OutOfMemoryException, InvalidCommandException, IOException {
 		// TODO Auto-generated method stub
 		Translate t;
 		SymbolTableList SymbolTable;
@@ -72,6 +77,26 @@ public class Compiler {
 		t = new Translate();
 
 		SymbolTable = new SymbolTableList();
+		passOne(t, SymbolTable, read, write);
+		String[] MLPInstructions = passTwo(t, SymbolTable, read, write);
+		write.openFile("SymbolTable.txt");
+		write.writeFile(SymbolTable.toString());
+		
+		write.closeFile();
+		writeBinary(t, SymbolTable, write, MLPInstructions);
+	}
+
+
+	/**
+	 * @param t
+	 * @param SymbolTable
+	 * @param read
+	 * @param write
+	 * @throws OutOfMemoryException
+	 * @throws IOException
+	 */
+	private static void passOne(Translate t, SymbolTableList SymbolTable, ReadFile read, WriteFile write)
+			throws OutOfMemoryException, IOException {
 		read.openFile("stuffTest.txt");
 		//read.openFile("ToBeCompiled.txt");
 		String[] preTrans = read.getInstructions();
@@ -92,6 +117,19 @@ public class Compiler {
 		write.writeFile(toWrite);
 //		read.closeFile();
 		write.closeFile();
+	}
+	
+	/**
+	 * @param t
+	 * @param SymbolTable
+	 * @param read
+	 * @param write
+	 * @return
+	 * @throws InvalidCommandException
+	 * @throws IOException
+	 */
+	private static String[] passTwo(Translate t, SymbolTableList SymbolTable, ReadFile read, WriteFile write)
+			throws InvalidCommandException, IOException {
 		read.openFile("InstructionsWritten.txt");
 ///*		String[] test = read.getInstructions();
 //		for ( String S : test )
@@ -104,16 +142,26 @@ public class Compiler {
 		write.writeFile(MLPInstructions);
 		read.closeFile();
 		write.closeFile();
-		write.openFile("SymbolTable.txt");
-		write.writeFile(SymbolTable.toString());
-		
-		write.closeFile();
-		String[] MLPInstructionsBinary = t.generateBinary( MLPInstructions );
-		write.openFile("BinaryMLPInstructions.txt");
-		write.writeFile(MLPInstructionsBinary);
-		write.closeFile();
+		return MLPInstructions;
 	}
 
+
+	/**
+	 * @param t
+	 * @param SymbolTable
+	 * @param write
+	 * @param MLPInstructions
+	 * @throws IOException
+	 */
+	private static void writeBinary(Translate t, SymbolTableList SymbolTable, WriteFile write, String[] MLPInstructions)
+			throws IOException {
+		short[] MLPInstructionsBinary = t.generateExecutableShort( t.generateExecutableString( MLPInstructions, SymbolTable ) );
+		write.openBinaryFile();
+		//write.openFile("BinaryMLPInstructions.txt");
+		//write.writeFile(MLPInstructionsBinary);
+		write.writeBinaryFile(MLPInstructionsBinary);
+		write.closeFile();
+	}
 	/**
 	 * @return the read
 	 */

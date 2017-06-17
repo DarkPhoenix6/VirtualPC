@@ -5,6 +5,8 @@
  */
 package compiler;
 
+import java.io.IOException;
+
 /**
  * @class	Write
  * @author 	Chris Fedun
@@ -20,4 +22,7 @@ public interface Write extends Read {
 	{
 		openFile("InstructionsWritten.txt");
 	}
+	
+	public void writeBinaryFile( short[] executable) throws IOException;
+
 }

@@ -16,14 +16,18 @@ public class SymbolTableList {
 	private final SymbolNode STLHead;
 	private SymbolNode last;
 	private int Avail;
-	int count;
+	private String DCString = null;
+	private String varString = null;
+	private String lableString = null;
+	int locationCount;
+	private String constString;
 	
 	public SymbolTableList()
 	{
 		STLHead = new SymbolNode("HEADNODE");
 		last = getSTLHead();
 		Avail = 99;
-		count = 0;
+		locationCount = 0;
 
 	}
 
@@ -34,7 +38,7 @@ public class SymbolTableList {
 		STLHead = Head;
 		this.last = getSTLHead();
 		Avail = 99;
-		count = 0;
+		locationCount = 0;
 	}
 	
 	// Accessors
@@ -57,10 +61,23 @@ public class SymbolTableList {
 	/**
 	 * @return the count
 	 */
-	public int getCount() {
-		return count;
+	public int getLocationCount() {
+		return locationCount;
 	}
 
+	public boolean hasMemoryLeft() throws OutOfMemoryException 
+	{
+		if ( getLocationCount() != getAvail() )
+		{
+			return false;
+		}
+		else
+		{
+			OutOfMemoryException OOME = new OutOfMemoryException();
+			throw OOME;
+		}
+		
+	}
 	/**
 	 * @return the sTLHead
 	 */
@@ -68,6 +85,74 @@ public class SymbolTableList {
 		return STLHead;
 	}
 
+	public String getDataControls()
+	{
+		String returnString = null;
+		SymbolNode saveSpot = getLast();
+		setLast(this.getSTLHead());
+		
+
+		while ( getLast() != null )
+		{
+			if ( returnString == null && getLast().getLocation() > getAvail() )
+			{
+
+				returnString = new String( Short.toString( getLast().getLocation() ) + " " + getLast().getValue() );
+			}
+			else if( getLast().getLocation() > getAvail() )
+			{
+				returnString += " \n" + Short.toString( getLast().getLocation() ) + " " + getLast().getValue();
+			}
+			this.iterateLast();
+		}
+		setLast( saveSpot );
+		return returnString;
+	}
+	/**
+	 * @return the dCString
+	 */
+	public String getDCString() {
+		return DCString;
+	}
+
+	/**
+	 * @return the varString
+	 */
+	public String getVarString() {
+		return varString;
+	}
+
+	/**
+	 * @return the lableString
+	 */
+	public String getLableString() {
+		return lableString;
+	}
+
+	/**
+	 * @return
+	 */
+	private String getConstString() {
+		// TODO Auto-generated method stub
+		return constString;
+	}
+	
+	/**
+	 * @param testString
+	 * @return
+	 */
+	private boolean isNull(String testString) {
+		// TODO Auto-generated method stub
+		if ( testString == null )
+		{
+			return true;
+		}
+		else
+		{
+			return false;
+		}
+	}
+	
 	// Mutators
 	/**
 	 * @param last the last to set
@@ -90,19 +175,25 @@ public class SymbolTableList {
 
 	public void insertAtEnd( String name, short location )
 	{
-		last.setNext( new SymbolNode( name, location ) );
-		iterateLast();
+		if ( ! symbolExists( name ) )
+		{
+			last.setNext( new SymbolNode( name, location ) );
+			iterateLast();
+		}
 	}
 	
 	/**
+	 * @throws OutOfMemoryException 
 	 * @Description Decrement Avail
 	 */
-	protected void decAvail()
+	protected void decAvail() throws OutOfMemoryException
 	{
 		setAvail(getAvail() - 1);
+		@SuppressWarnings("unused")
+		boolean check = hasMemoryLeft();
 	}
 	
-	public void insertAtEnd( String name, short location, short Value)
+	public void insertAtEnd( String name, short location, short Value) throws OutOfMemoryException
 	{
 		if ( ! symbolExists( name ) )
 		{
@@ -115,216 +206,319 @@ public class SymbolTableList {
 	/**
 	 * @param count the count to set
 	 */
-	public void setCount(int count) {
-		this.count = count;
+	public void setLocationCount(int count) {
+		this.locationCount = count;
 	}
-
-	public String[] generateSymbolTable( String[] Str )
+	
+	public void incLC() throws OutOfMemoryException
 	{
-		//TODO
-		String[] postDCString = addDataControl( Str );
-		int i = 0;
-		int arrPlace = 0;
-		int[] arr = new int[postDCString.length];
-		//TODO check for DCs And inject Stores at top of list
-		for ( String S : postDCString)
-		{
-			if ( S.contains(":") )
-			{
-				generateNode( S, i, getAvail() );
-				arr[arrPlace] = i;
-				arrPlace++;
-				i++;
-				S += " \n";
-			}
-			else
-			{
-				i++;
-				S += " \n";
-			}
-			
-		}
-		
-		String[] preReturnString = removeLables(postDCString);
-		
-		
-//		preReturnString[returnCount] = new String("BR TOP");
-		generateVariables(preReturnString);
-		String[] returnString = generateConstants(preReturnString);
-		return returnString;
-		
+		setLocationCount( 1 + getLocationCount() );
+		@SuppressWarnings("unused")
+		boolean check = hasMemoryLeft();
 	}
 
-	/**
-	 * @param postDCString
-	 * @return
-	 */
-	private String[] removeLables(String[] postDCString) {
-		String temp = null;
-		
-		for ( String ST : postDCString )
+	public String symbolTable( String instruction) throws OutOfMemoryException
+	{
+		System.out.println(getLocationCount());
+		if ( instruction.contains(":") )
 		{
-			for ( String S : ST.split("\\s\n") )
+			String substring = instruction.substring(0, instruction.indexOf(":"));
+			
+			
+			if ( instruction.contains(": DC ") )
 			{
-				if ( ! S.contains(":") )
+				
+				setDCString(substring);
+				
+				
+				if( ! symbolExists( substring ) )
 				{
-					if ( temp == null )
-					{
-						temp = S;
-					}
-					else
-					{
-						temp += " \n" + S;
-					}
+					generateNode( instruction, getLocationCount(), getAvail() );
 				}
-				else
-				{
-					
-					
-					if ( temp == null )
-					{
-						temp = S.substring(S.indexOf(":") + 1);
-					}
-					else
-					{
-						temp += " \n" + S.substring(S.indexOf(":") + 1);
-					}
-				}
-			}
-		}
-		 
-		String[] preReturnString = temp.split("\\s\n");
-		
-		return preReturnString;
-	}
 
-	/**
-	 * @param preReturnString
-	 */
-	private void generateVariables(String[] string) {
-		// TODO Auto-generated method stub
-
-		int i = -1;
-		for ( String S : string )
-		{
-			i++;
-			if ( S.split("\\s").length > 1 )
-			{
-				if (S.regionMatches(0, "DC", 0, 2))
-				{
-					continue;
-				}
-				else if ( ! isInt(S.split("\\s")[1] ) && ! symbolExists(S.split("\\s")[1]) )
-				{
-					generateNode( S.split("\\s")[1] + ":", i, getAvail());
-				}
-			
+//				else
+//				{
+//					short value = Short.valueOf( constants[2] );
+//					getNode( substring ).setValue(value);
+//					getNode( substring ).setLocation( (short) getAvail() );
+//					decAvail();
+//				}
 				
-			}
-			
-			else if ( isInt( S ) )
-			{
-				generateNode( S + ": " + S, i, getAvail() );
-			}
-			
-			
-		
-			
-			
-		}
-	}
-
-	/**
-	 * @param str
-	 * @return
-	 */
-	private String[] addDataControl(String[] preDC ) {
-		// TODO Auto-generated method stub
-		
-		
-		int tempPlace = 0;
-		String BR = new String("BR DATACONTROL");
-		String TOP = new String("BR TOP");
-		String[] temp = new String[preDC.length];
-		int place = 0;
-		
-		int[] arr = new int[preDC.length]; 
-		for ( String instruction: preDC )
-		{
-			//TODO: use constants
-			
-			//String substring = instruction[0].substring(0, instruction[].length() - 1);
-			if ( instruction.contains(": DC") || instruction.contains(": dc"))
-			{
-				
-				String substring = instruction.substring(0, instruction.indexOf(":"));
-				String[] constants = instruction.split("\\s");
-				if ( tempPlace == 0 )
-				{
-					temp[tempPlace] = new String( "DATACONTROL: LD " + constants[2] );
-				}
-				else
-				{
-					temp[tempPlace] = new String( "LD " + constants[2] );
-				}
-				
-				tempPlace++;
-				temp[tempPlace] = new String( "STORE " + substring );
-				tempPlace++;
-				arr[count] = place;
-				count++;
-				place++;
-				
+				return null;
 			}
 			else 
 			{
-				place++;
-			}
-		}
-		
-		if ( count > 0 )
-		{	
-		
-			String[] postDCString = new String[preDC.length + 3 + tempPlace ];
-	
-			postDCString[0] = BR;
-			int postDCPlace = 1;
-			for ( String instruction: preDC )
-			{
-				if ( postDCPlace == 1 )
+				if ( symbolExists( substring ) )
 				{
-					postDCString[postDCPlace] = "TOP: " + instruction;
+					getNode( substring ).setLocation( (short) getLocationCount() );
 				}
 				else
 				{
-					postDCString[postDCPlace] = instruction;
+					generateNode( instruction, getLocationCount(), getAvail() );
+				}
+				setLableString(substring);
+				return symbolTable( removeLables( instruction ) );
+			}
+		}
+		else if ( instruction.split("\\s").length > 1 )
+		{
+			
+			
+			if ( ! isInt(instruction.split("\\s")[1] ) && ! symbolExists(instruction.split("\\s")[1]) )
+			{
+				setVarString(instruction);
+				return removeLables( instruction );
+				//generateNode( instruction.split("\\s")[1] + ":", getLocationCount(), getAvail());
+			}
+			else if ( isInt(instruction.split("\\s")[1] ) && ! symbolExists(instruction.split("\\s")[1]) )
+			{
+				String PoM = null;
+				String num = null;
+				@SuppressWarnings("unused")
+				String noString = symbolTable( instruction.split("\\s")[1] );
+				if ( Short.valueOf( instruction.split("\\s")[1] ) < 0 )
+				{
+					PoM = new String("PLUS");
+					num = instruction.split("\\s")[1].substring( 1 );
+				}
+				else
+				{
+					PoM = new String("PLUS");
+					num = instruction.split("\\s")[1];
+				}
+				return removeLables( instruction.split("\\s")[0] + " " + PoM + num );
+			}
+			
+		}
+		
+		else if ( isInt( instruction ) )
+		{
+			if ( Short.valueOf(instruction) < 0 )
+			{
+				//generateNode( "MINUS" + instruction.substring( 1 ) + ": " + instruction, getLocationCount(), getAvail() );
+				if ( constString == null )
+				{
+					constString = new String("MINUS" + instruction.substring( 1 ) + ": DC " + instruction);
+				}
+				else
+				{
+					constString += " \n" + "MINUS" + instruction.substring( 1 ) + ": DC " + instruction;
 				}
 				
-				postDCPlace++;
 			}
-			
-			for ( int i = 0; i < tempPlace; i++ )
+			else
 			{
-				postDCString[postDCPlace] = temp[i];
-				postDCPlace++;
+				//generateNode( "PLUS" + instruction + ": " + instruction, getLocationCount(), getAvail() );
+				if ( constString == null )
+				{
+					constString = new String("PLUS" + instruction + ": DC " + instruction);
+				}
+				else
+				{
+					constString += " \n" + "PLUS" + instruction + ": DC " + instruction;
+				}
 			}
-			
-			postDCString[postDCString.length - 1] = TOP;
-			//System.out.println(postDCString.length);
-			return postDCString;
+			return null;
 		}
 		else
 		{
+			if ( instruction.compareTo("EXIT") == 0 )
+			{
+				return symbolTable( "BR DONE" );
+			}
 			
-			return preDC;
+			
+		}
+		return instruction;
+	
+		
+		
+		
+		
+	}
+
+	/**
+	 * @param instruction
+	 */
+	private void setVarString(String instruction) {
+		if ( varString == null )
+		{
+			varString = new String(" " +instruction.split("\\s")[1] + " ");
+		}
+		else
+		{
+			varString += " " + instruction.split("\\s")[1] + " ";
 		}
 	}
+
+	/**
+	 * @param substring
+	 */
+	private void setLableString(String substring) {
+		if ( lableString == null )
+		{
+			lableString = new String( " " + substring + " " );
+		}
+		else 
+		{
+			lableString +=  substring + " ";
+		}
+	}
+
+	/**
+	 * @param substring
+	 */
+	private void setDCString(String substring) {
+		if ( DCString == null )
+		{
+			DCString = new String( substring );
+		}
+		else
+		{
+			DCString += " " + substring;
+		}
+	}
+	
+	public String[] generateSymbolTable( String[] Str ) throws OutOfMemoryException
+	{
+
+		String temp = null;
+		//TODO check for DCs And inject Stores at top of list
+
+		for ( String instruction : Str )
+		{
+			if ( temp == null )
+			{
+				temp = symbolTable( instruction );
+			}
+			else
+			{
+				if ( ! isNull( symbolTable( instruction ) ) )
+				{
+					temp += " \n" + symbolTable( instruction );
+				}
+			}
+			incLC();
+		}
+		
+		if ( temp.contains("BR DONE") && ! temp.contains(" STOP") )
+		{
+			temp += " \n" + symbolTable( "DONE: STOP" );
+			incLC();
+		}
+		String[] preReturnString = temp.split("\\s\n");
+		generateVariables();
+		generateConstants();
+//		preReturnString[returnCount] = new String("BR TOP");
+		//generateVariables(preReturnString);
+		//String[] returnString = generateConstants(preReturnString);
+		return preReturnString;
+		
+	}
+
+	
+	
+
+
+	private String removeLables(String instruction) {
+
+		if ( ! instruction.contains(":") )
+		{
+			return instruction;
+		}
+		else
+		{	
+			return  instruction.substring(instruction.indexOf(":") + 2);	
+		}
+	}
+
+
+	/**
+	 * @param preReturnString
+	 * @throws OutOfMemoryException 
+	 */
+	private void generateVariables() throws OutOfMemoryException {
+		// TODO Auto-generated method stub
+
+		
+		if ( getVarString() != null )
+		{
+			String[] t = getVarString().split("\\s");
+			for ( String S : t )
+			{
+				
+				if ( isNull(getDCString()) )
+				{
+					if ( isNull(getLableString() ) )
+					{
+						symbolTableDC( S + ": DC 0" );
+					}
+					else if ( ! isNull(getLableString() )  )
+					{
+						if ( ! getLableString().contains( " " + S + " " ) )
+						{
+							symbolTableDC( S + ": DC 0" );
+						}
+					}
+				}
+				else
+				{
+					if ( isNull(getLableString() ) && ! isNull(getDCString()) )
+					{
+						if ( ! getDCString().contains( S + ": DC 0" ) )
+						{
+							symbolTableDC( S + ": DC 0" );
+						}
+					}
+				}
+				
+			}
+			
+		}
+					
+	}
+
+	
+
+	/**
+	 * @param instruction
+	 * @param b
+	 * @throws OutOfMemoryException 
+	 */
+	private void symbolTableDC(String instruction) throws OutOfMemoryException {
+		// TODO Auto-generated method stub
+		String substring = instruction.substring(0, instruction.indexOf(":"));
+		String[] constants = instruction.split("\\s");
+		if( ! symbolExists( substring ) )
+		{
+			generateNode( instruction, getLocationCount(), getAvail() );
+		}
+		else
+		{
+			short value = Short.valueOf( constants[2] );
+			getNode( substring ).setValue(value);
+		}
+	}
+
+	private void generateConstants() throws OutOfMemoryException {
+		if ( getConstString() != null )
+		{
+			String[] t = getConstString().split("\\s\n");
+			for ( String S : t )
+			{
+				symbolTableDC( S );
+			}
+		}
+	}
+
 
 	/**
 	 * @param postDCString
 	 * @return 
+	 * @throws OutOfMemoryException 
 	 */
-	private String[] generateConstants(String[] instructions) {
+	@SuppressWarnings("unused")
+	private String[] generateConstants(String[] instructions) throws OutOfMemoryException {
 		// TODO insert constants
 		
 		int i = -1;
@@ -402,7 +596,7 @@ public class SymbolTableList {
 			
 			
 		}
-		String S = new String(instructionString + constString + " \nSTOP");
+		String S = new String(instructionString + constString + " \nSTOP" );
 		String[] returnString = S.split("\\s\n");
 		generateNode( "DONE: STOP", returnString.length - 1, returnString.length - 1 );
 		return returnString;
@@ -411,15 +605,20 @@ public class SymbolTableList {
 	/**
 	 * @param s
 	 * @param i
+	 * @throws OutOfMemoryException 
 	 */
-	private void generateNode(String lable, int location, int avail) {
+	private void generateNode(String lable, int location, int avail) throws OutOfMemoryException {
 		// TODO Auto-generated method stub
 		String[] instruction = lable.split("\\s");
 		String substring = instruction[0].substring(0, instruction[0].length() - 1);
 		if ( lable.contains(": DC") || lable.contains(": dc"))
 		{
 			insertAtEnd( substring, (short) avail, Short.valueOf(instruction[2]) );
-			generateNode( instruction[2] + ": " + instruction[2], location, avail );
+			//generateNode( instruction[2] + ": " + instruction[2], location, avail );
+		}
+		else if ( ! isInt(substring ) && lable.contains(":") )
+		{
+			insertAtEnd( substring, (short) location );
 		}
 		else if ( ! isInt(substring ) )
 		{
@@ -460,10 +659,10 @@ public class SymbolTableList {
 		SymbolNode saveSpot = last;
 		setLast(getSTLHead());
 		int loc = -1;
-		int t = 0;
+
 		while ( getLast() != saveSpot && ! ( getLast().getName().contains(name) && getLast().getName().equals(name)))
 		{
-			t++;
+
 			iterateLast();
 			if ( getLast().getName().contains(name))
 			{
@@ -485,6 +684,35 @@ public class SymbolTableList {
 
 	}
 
+	public SymbolNode getNode( String name )
+	{
+		SymbolNode saveSpot = last;
+		SymbolNode returnNode = null;
+		setLast(getSTLHead());
+
+		while ( getLast() != saveSpot && ! ( getLast().getName().contains(name) && getLast().getName().equals(name)))
+		{
+	
+			iterateLast();
+			if ( getLast().getName().contains(name))
+			{
+				returnNode = getLast();
+			}
+		}
+		
+
+		setLast( saveSpot );
+		if ( returnNode != null )
+		{	
+			return returnNode;
+		}
+		else
+		{
+			InvalidIdentifierError e = new InvalidIdentifierError( name );
+			throw e;
+		}
+	}
+	
 	boolean symbolExists(String name)
 	{
 		SymbolNode saveSpot = getLast();
@@ -514,7 +742,7 @@ public class SymbolTableList {
 				+ "Avail= %s \n"
 				+ "count= %s \n"
 				+ " \n"
-				+ "%s", Avail, count, printTable());
+				+ "%s", Avail, locationCount, printTable());
 	}
 
 	/**

@@ -5,8 +5,10 @@
  */
 package machine;
 
+import java.io.IOException;
 import java.util.List;
 import compiler.Compiler;
+import compiler.OutOfMemoryException;
 /**
  * @class	Computer
  * @author 	Chris Fedun
@@ -42,8 +44,10 @@ public class Computer {
 	 * @param args
 	 * @throws NullPointerException
 	 * @throws Invalid
+	 * @throws OutOfMemoryException 
+	 * @throws IOException 
 	 */
-	public Computer( String[] args ) throws NullPointerException, Invalid {
+	public Computer( String[] args ) throws NullPointerException, Invalid, OutOfMemoryException, IOException {
 		this.cpu = new CPU();
 		this.InDev = new InputDev();
 		this.OutDev = new OutputDev();
@@ -92,7 +96,7 @@ public class Computer {
 		LoadProgram(program);
 	}
 
-	public void RunProgram() throws Invalid
+	public void RunProgram() throws Invalid, IOException
 	{
 		for (; ;) // ever
 		{
@@ -136,8 +140,9 @@ public class Computer {
 	 * 
 	 * @deprecated
 	 * @throws Invalid
+	 * @throws IOException 
 	 */
-	public void run() throws Invalid
+	public void run() throws Invalid, IOException
 	{
 		while (cpu.getRunFlag())
 		{
@@ -164,9 +169,10 @@ public class Computer {
 	}
 	
 	/**
+	 * @throws IOException 
 	 * 
 	 */
-	private void dump() {
+	private void dump() throws IOException {
 		// TODO Auto-generated method stub
 		System.out.print( this.toString() );
 		compiler.getWrite().openFile( "dump.txt" );
