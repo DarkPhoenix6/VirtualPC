@@ -84,7 +84,10 @@ public class Compiler {
 		
 		write.closeFile();
 		writeBinary(t, SymbolTable, write, MLPInstructions);
+		readBinary( read );
 	}
+
+
 
 
 	/**
@@ -97,7 +100,8 @@ public class Compiler {
 	 */
 	private static void passOne(Translate t, SymbolTableList SymbolTable, ReadFile read, WriteFile write)
 			throws OutOfMemoryException, IOException {
-		read.openFile("stuffTest.txt");
+		read.openFile("NewTest.txt");
+		//read.openFile("stuffTest.txt");
 		//read.openFile("ToBeCompiled.txt");
 		String[] preTrans = read.getInstructions();
 		read.closeFile();
@@ -155,12 +159,29 @@ public class Compiler {
 	 */
 	private static void writeBinary(Translate t, SymbolTableList SymbolTable, WriteFile write, String[] MLPInstructions)
 			throws IOException {
-		short[] MLPInstructionsBinary = t.generateExecutableShort( t.generateExecutableString( MLPInstructions, SymbolTable ) );
+		short[] MLPInstructionsBinary = t.generateExecutableShort( 
+				t.generateExecutableString( MLPInstructions, SymbolTable ) );
+		String[] MLPInstructionsBinaryString = t.generateBinary(MLPInstructions, SymbolTable);
 		write.openBinaryFile();
-		//write.openFile("BinaryMLPInstructions.txt");
-		//write.writeFile(MLPInstructionsBinary);
 		write.writeBinaryFile(MLPInstructionsBinary);
 		write.closeFile();
+		write.openFile("BinaryMLPInstructions.txt");
+		write.writeFile(MLPInstructionsBinaryString);
+		write.closeFile();
+	}
+	/**
+	 * @param read2
+	 * @throws IOException 
+	 */
+	private static void readBinary(ReadFile read2) throws IOException {
+		// TODO Auto-generated method stub
+		read2.openBinaryFile();
+		short[] binFile = read2.readBinaryFile();
+		read2.closeFile();
+		for ( short s : binFile )
+		{
+			System.out.println(s);
+		}
 	}
 	/**
 	 * @return the read

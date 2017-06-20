@@ -1,0 +1,9 @@
+A = 3
+B = 2
+C = A + B * C / D - 3 + 6 * 9
+IN D
+OUT C
+OUT D
+D += C
+OUT D
+EXIT

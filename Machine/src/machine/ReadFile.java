@@ -3,7 +3,7 @@
  * compiler
  * ReadFile.java
  */
-package compiler;
+package machine;
 
 import java.io.DataInputStream;
 import java.io.File;
@@ -15,7 +15,7 @@ import java.util.Scanner;
 
 /**
  * @class	ReadFile
- * @author 	Chris Fedun
+ * @author 	Chris fedun
  * @date	Jun 3, 2017
  *
  */

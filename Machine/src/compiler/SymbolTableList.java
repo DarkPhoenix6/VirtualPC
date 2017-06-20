@@ -15,10 +15,16 @@ public class SymbolTableList {
 
 	private final SymbolNode STLHead;
 	private SymbolNode last;
+	/**
+	 * @Description the next available Data Memory Location
+	 */
 	private int Avail;
 	private String DCString = null;
 	private String varString = null;
 	private String lableString = null;
+	/**
+	 * @Description the current Instruction Location
+	 */
 	int locationCount;
 	private String constString;
 	
@@ -85,6 +91,10 @@ public class SymbolTableList {
 		return STLHead;
 	}
 
+	/**
+	 * 
+	 * @return A String containing all Variables Locations and Values
+	 */
 	public String getDataControls()
 	{
 		String returnString = null;
@@ -108,6 +118,7 @@ public class SymbolTableList {
 		setLast( saveSpot );
 		return returnString;
 	}
+	
 	/**
 	 * @return the dCString
 	 */
@@ -133,7 +144,6 @@ public class SymbolTableList {
 	 * @return
 	 */
 	private String getConstString() {
-		// TODO Auto-generated method stub
 		return constString;
 	}
 	
@@ -142,7 +152,6 @@ public class SymbolTableList {
 	 * @return
 	 */
 	private boolean isNull(String testString) {
-		// TODO Auto-generated method stub
 		if ( testString == null )
 		{
 			return true;
@@ -153,6 +162,37 @@ public class SymbolTableList {
 		}
 	}
 	
+	/**
+	 * @param temp
+	 * @param string
+	 * @return 
+	 */
+	private int findIndexInArray(String[] temp, String string) throws InvalidIdentifierError, NullPointerException{
+		// TODO Auto-generated method stub
+		int index = -1;
+		if ( temp == null )
+		{
+			return index;
+		}
+		for ( int i = 0; i < temp.length; i++ )
+		{
+			if ( temp[i].matches(string) )
+			{
+				index = i;
+				break;
+			}
+		}
+		
+		if ( index != -1 )
+		{
+			return index;
+		}
+		else
+		{
+			return index;
+		}
+		
+	}
 	// Mutators
 	/**
 	 * @param last the last to set
@@ -219,7 +259,7 @@ public class SymbolTableList {
 
 	public String symbolTable( String instruction) throws OutOfMemoryException
 	{
-		System.out.println(getLocationCount());
+
 		if ( instruction.contains(":") )
 		{
 			String substring = instruction.substring(0, instruction.indexOf(":"));
@@ -228,70 +268,69 @@ public class SymbolTableList {
 			if ( instruction.contains(": DC ") )
 			{
 				
-				setDCString(substring);
+				this.setDCString(substring);
 				
 				
-				if( ! symbolExists( substring ) )
+				if( ! this.symbolExists( substring ) )
 				{
-					generateNode( instruction, getLocationCount(), getAvail() );
+					this.generateNode( instruction, this.getLocationCount(), this.getAvail() );
 				}
-
-//				else
-//				{
-//					short value = Short.valueOf( constants[2] );
-//					getNode( substring ).setValue(value);
-//					getNode( substring ).setLocation( (short) getAvail() );
-//					decAvail();
-//				}
 				
 				return null;
 			}
 			else 
 			{
-				if ( symbolExists( substring ) )
+				if ( this.symbolExists( substring ) )
 				{
-					getNode( substring ).setLocation( (short) getLocationCount() );
+					this.getNode( substring ).setLocation( (short) this.getLocationCount() );
 				}
 				else
 				{
-					generateNode( instruction, getLocationCount(), getAvail() );
+					this.generateNode( instruction, this.getLocationCount(), this.getAvail() );
 				}
-				setLableString(substring);
-				return symbolTable( removeLables( instruction ) );
+				this.setLableString(substring);
+				return this.symbolTable( this.removeLables( instruction ) );
 			}
 		}
 		else if ( instruction.split("\\s").length > 1 )
 		{
-			
-			
-			if ( ! isInt(instruction.split("\\s")[1] ) && ! symbolExists(instruction.split("\\s")[1]) )
+						
+			if ( ! this.isInt( instruction.split( "\\s" )[1] ) && ! this.symbolExists( instruction.split( "\\s" )[1] ) ) 
+				// if Operand is not an Integer nor does a Symbol Exist for the current Operand create
 			{
-				setVarString(instruction);
-				return removeLables( instruction );
-				//generateNode( instruction.split("\\s")[1] + ":", getLocationCount(), getAvail());
+				if ( this.getVarString() == null || this.findIndexInArray(
+						this.getVarString().split("\\s"), instruction.split("\\s")[1]) == -1)
+				this.setVarString(instruction);
+				return this.removeLables( instruction );
+				
 			}
-			else if ( isInt(instruction.split("\\s")[1] ) && ! symbolExists(instruction.split("\\s")[1]) )
+			else if ( this.isInt(instruction.split("\\s")[1] ) && ! this.symbolExists(instruction.split("\\s")[1]) )
 			{
 				String PoM = null;
 				String num = null;
 				@SuppressWarnings("unused")
-				String noString = symbolTable( instruction.split("\\s")[1] );
+				String noString = this.symbolTable( instruction.split("\\s")[1] );
 				if ( Short.valueOf( instruction.split("\\s")[1] ) < 0 )
 				{
-					PoM = new String("PLUS");
+					PoM = new String("MINUS");
 					num = instruction.split("\\s")[1].substring( 1 );
 				}
-				else
+				else if ( Short.valueOf( instruction.split("\\s")[1] ) > 0 )
 				{
 					PoM = new String("PLUS");
 					num = instruction.split("\\s")[1];
 				}
-				return removeLables( instruction.split("\\s")[0] + " " + PoM + num );
+				else if ( Short.valueOf( instruction.split("\\s")[1] ) == 0 )
+				{
+					num = new String("ZERO");
+					return this.removeLables( instruction.split("\\s")[0] + " " + num );
+				}
+				return this.removeLables( instruction.split("\\s")[0] + " " + PoM + num );
 			}
 			
 		}
 		
-		else if ( isInt( instruction ) )
+		else if ( this.isInt( instruction ) ) // if the instruction is an integer Generate A Constant
 		{
 			if ( Short.valueOf(instruction) < 0 )
 			{
@@ -306,9 +345,9 @@ public class SymbolTableList {
 				}
 				
 			}
-			else
+			else if ( Short.valueOf(instruction) > 0 )
 			{
-				//generateNode( "PLUS" + instruction + ": " + instruction, getLocationCount(), getAvail() );
+				
 				if ( constString == null )
 				{
 					constString = new String("PLUS" + instruction + ": DC " + instruction);
@@ -318,18 +357,29 @@ public class SymbolTableList {
 					constString += " \n" + "PLUS" + instruction + ": DC " + instruction;
 				}
 			}
+			else if ( Short.valueOf(instruction) == 0 )
+			{
+				if ( constString == null )
+				{
+					constString = new String("ZERO" + ": DC " + instruction);
+				}
+				else
+				{
+					constString += " \n" + "ZERO" + ": DC " + instruction;
+				}
+			}
 			return null;
 		}
 		else
 		{
 			if ( instruction.compareTo("EXIT") == 0 )
 			{
-				return symbolTable( "BR DONE" );
+				return this.symbolTable( "BR DONE" );
 			}
 			
 			
 		}
-		return instruction;
+		return instruction; // else return the instruction
 	
 		
 		
@@ -343,7 +393,7 @@ public class SymbolTableList {
 	private void setVarString(String instruction) {
 		if ( varString == null )
 		{
-			varString = new String(" " +instruction.split("\\s")[1] + " ");
+			varString = new String(instruction.split("\\s")[1] + " ");
 		}
 		else
 		{
@@ -383,7 +433,7 @@ public class SymbolTableList {
 	{
 
 		String temp = null;
-		//TODO check for DCs And inject Stores at top of list
+		
 
 		for ( String instruction : Str )
 		{
@@ -598,7 +648,7 @@ public class SymbolTableList {
 		}
 		String S = new String(instructionString + constString + " \nSTOP" );
 		String[] returnString = S.split("\\s\n");
-		generateNode( "DONE: STOP", returnString.length - 1, returnString.length - 1 );
+		this.generateNode( "DONE: STOP", returnString.length - 1, returnString.length - 1 );
 		return returnString;
 	}
 
@@ -608,26 +658,26 @@ public class SymbolTableList {
 	 * @throws OutOfMemoryException 
 	 */
 	private void generateNode(String lable, int location, int avail) throws OutOfMemoryException {
-		// TODO Auto-generated method stub
+		
 		String[] instruction = lable.split("\\s");
 		String substring = instruction[0].substring(0, instruction[0].length() - 1);
 		if ( lable.contains(": DC") || lable.contains(": dc"))
 		{
-			insertAtEnd( substring, (short) avail, Short.valueOf(instruction[2]) );
+			this.insertAtEnd( substring, (short) avail, Short.valueOf(instruction[2]) );
 			//generateNode( instruction[2] + ": " + instruction[2], location, avail );
 		}
-		else if ( ! isInt(substring ) && lable.contains(":") )
+		else if ( ! this.isInt(substring ) && lable.contains(":") )
 		{
-			insertAtEnd( substring, (short) location );
+			this.insertAtEnd( substring, (short) location );
 		}
-		else if ( ! isInt(substring ) )
+		else if ( ! this.isInt( substring ) )
 		{
-			insertAtEnd( substring, (short) avail );
-			decAvail();
+			this.insertAtEnd( substring, (short) avail );
+			this.decAvail();
 		}
 		else 
 		{
-			insertAtEnd( substring, (short) location );
+			this.insertAtEnd( substring, (short) location );
 		}
 		
 	}
@@ -638,7 +688,6 @@ public class SymbolTableList {
 	 */
 	@SuppressWarnings("unused")
 	private boolean isInt(String string) {
-		// TODO Auto-generated method stub
 		try
 		{
 			int i = Integer.valueOf(string);
@@ -655,22 +704,21 @@ public class SymbolTableList {
 	 * @return
 	 */
 	public int getLocation( String name) {
-		// TODO Auto-generated method stub
-		SymbolNode saveSpot = last;
-		setLast(getSTLHead());
+		SymbolNode saveSpot = this.getLast();
+		this.setLast( this.getSTLHead() );
 		int loc = -1;
 
-		while ( getLast() != saveSpot && ! ( getLast().getName().contains(name) && getLast().getName().equals(name)))
+		while ( this.getLast() != saveSpot && ! ( this.getLast().getName().contains(name) && this.getLast().getName().equals(name)))
 		{
 
-			iterateLast();
-			if ( getLast().getName().contains(name))
+			this.iterateLast();
+			if ( this.getLast().getName().contains(name))
 			{
-				loc = getLast().getLocation();
+				loc = this.getLast().getLocation();
 			}
 		}
 		
-		setLast( saveSpot );
+		this.setLast( saveSpot );
 		if ( loc != -1 )
 		{	
 			return loc;
@@ -686,22 +734,22 @@ public class SymbolTableList {
 
 	public SymbolNode getNode( String name )
 	{
-		SymbolNode saveSpot = last;
+		SymbolNode saveSpot = this.getLast();
 		SymbolNode returnNode = null;
-		setLast(getSTLHead());
+		this.setLast(this.getSTLHead());
 
-		while ( getLast() != saveSpot && ! ( getLast().getName().contains(name) && getLast().getName().equals(name)))
+		while ( this.getLast() != saveSpot && ! ( this.getLast().getName().contains(name) && this.getLast().getName().equals(name)))
 		{
 	
-			iterateLast();
-			if ( getLast().getName().contains(name))
+			this.iterateLast();
+			if ( this.getLast().getName().contains(name))
 			{
-				returnNode = getLast();
+				returnNode = this.getLast();
 			}
 		}
 		
 
-		setLast( saveSpot );
+		this.setLast( saveSpot );
 		if ( returnNode != null )
 		{	
 			return returnNode;
@@ -715,13 +763,13 @@ public class SymbolTableList {
 	
 	boolean symbolExists(String name)
 	{
-		SymbolNode saveSpot = getLast();
-		setLast(this.getSTLHead());
+		SymbolNode saveSpot = this.getLast();
+		this.setLast(this.getSTLHead());
 		boolean exists = false;
-		while ( getLast() != null )
+		while ( this.getLast() != null )
 		{
 		
-			if ( getLast().getName().equals(name))
+			if ( this.getLast().getName().equals(name))
 			{
 				exists = true;
 				
@@ -730,10 +778,11 @@ public class SymbolTableList {
 			this.iterateLast();
 		}
 		
-		setLast( saveSpot );
+		this.setLast( saveSpot );
 		return exists;
 	}
-	/* (non-Javadoc)
+	/**
+	 *  (non-Javadoc)
 	 * @see java.lang.Object#toString()
 	 */
 	@Override
@@ -742,31 +791,30 @@ public class SymbolTableList {
 				+ "Avail= %s \n"
 				+ "count= %s \n"
 				+ " \n"
-				+ "%s", Avail, locationCount, printTable());
+				+ "%s", Avail, locationCount, this.printTable());
 	}
 
 	/**
 	 * @return
 	 */
 	private String printTable() {
-		// TODO Auto-generated method stub
-		SymbolNode saveSpot = getLast();
-		setLast(this.getSTLHead());
+		SymbolNode saveSpot = this.getLast();
+		this.setLast(this.getSTLHead());
 		
 		String returnString = null;
-		while ( getLast() != null )
+		while ( this.getLast() != null )
 		{
 			if ( returnString == null )
 			{
-				returnString = getLast().toString();
+				returnString = this.getLast().toString();
 			}
 			else 
 			{
-				returnString += getLast().toString();
+				returnString += this.getLast().toString();
 			}
 			this.iterateLast();
 		}
-		setLast( saveSpot );
+		this.setLast( saveSpot );
 		return returnString;
 	}
 	

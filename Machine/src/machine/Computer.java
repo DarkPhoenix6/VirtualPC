@@ -9,6 +9,7 @@ import java.io.IOException;
 import java.util.List;
 import compiler.Compiler;
 import compiler.OutOfMemoryException;
+import compiler.ReadFile;
 /**
  * @class	Computer
  * @author 	Chris Fedun
@@ -22,6 +23,7 @@ public class Computer {
 	private MainMem Memory;
 	private PersistantStorage[] Storage;
 	private Compiler compiler;
+	private ReadFile read;
 	/**
 	 * 
 	 * @throws NullPointerException
@@ -57,6 +59,30 @@ public class Computer {
 		this.setStorage( (short) 1, new HardDrive());
 		this.setStorage( (short) 0, new SolidState());
 		LoadProgram(compiler.compile(args));
+	}
+	
+	/**
+	 * 
+	 * @param args
+	 * @throws NullPointerException
+	 * @throws Invalid
+	 * @throws OutOfMemoryException 
+	 * @throws IOException 
+	 */
+	public Computer( String file ) throws NullPointerException, Invalid, OutOfMemoryException, IOException {
+		this.cpu = new CPU();
+		this.InDev = new InputDev();
+		this.OutDev = new OutputDev();
+		this.Memory = new MainMem();
+		this.compiler = new Compiler();
+		this.Storage = new PersistantStorage[ 2 ];
+		this.setStorage( (short) 1, new HardDrive());
+		this.setStorage( (short) 0, new SolidState());
+		this.read = new ReadFile();
+		this.read.openBinaryFile(file);
+		short[] program = this.read.readBinaryFile();
+		this.read.closeFile();
+		LoadProgram(program);
 	}
 	/**
 	 * 
@@ -222,7 +248,7 @@ public class Computer {
 	 * @param program
 	 * @throws NullPointerException
 	 * @throws Invalid
-	 * @deprecated
+	 * 
 	 */
 	private void LoadProgram(short[] program) throws NullPointerException, Invalid{
 		// TODO Auto-generated method stub
@@ -232,13 +258,8 @@ public class Computer {
 			this.Memory.write(this.cpu.getPC().read(), program[this.cpu.getPC().read()]);
 			this.cpu.getPC().inc();
 		}
-		
-		/*for ( short x : program) // for each "x" in "program"
-		{
-			this.Memory.write(PC.read(), x);
-			this.PC.inc();
-		}*/
-		this.cpu.setProgramLength((short) program.length);
+	
+		//this.cpu.setProgramLength((short) program.length);
 		this.cpu.getPC().branch((short) 0);
 		this.cpu.setRunFlag(true);
 	}

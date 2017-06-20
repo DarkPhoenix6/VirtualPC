@@ -1,15 +1,15 @@
 
 REGISTERS:
-Accumulator		+00055
-ProgramCounter		+12
+Accumulator		+00010
+ProgramCounter		+16
 InstructionRegister	+00000
 OperationCode		+00
-Operand			+12
+Operand			+16
 MainDataRegister	+00000
 MEMORY: 
         0      1      2      3      4      5      6      7      8      9
- 0 +00913 +00798 +00797 +00796 +00198 +00397 +00596 +00699 +00295 +00895 
-10 +00911 +00000 +00002 +00112 +00299 +00901 +00000 +00000 +00000 +00000 
+ 0 +00194 +00298 +00193 +00297 +00198 +00397 +00296 +00795 +00896 +00895 
+10 +00195 +00396 +00295 +00895 +00915 +00000 +00000 +00000 +00000 +00000 
 20 +00000 +00000 +00000 +00000 +00000 +00000 +00000 +00000 +00000 +00000 
 30 +00000 +00000 +00000 +00000 +00000 +00000 +00000 +00000 +00000 +00000 
 40 +00000 +00000 +00000 +00000 +00000 +00000 +00000 +00000 +00000 +00000 
@@ -17,7 +17,7 @@ MEMORY:
 60 +00000 +00000 +00000 +00000 +00000 +00000 +00000 +00000 +00000 +00000 
 70 +00000 +00000 +00000 +00000 +00000 +00000 +00000 +00000 +00000 +00000 
 80 +00000 +00000 +00000 +00000 +00000 +00000 +00000 +00000 +00000 +00000 
-90 +00000 +00000 +00000 +00000 +00000 +00055 +00010 +00010 +00001 +00002 
+90 +00000 +00000 +00000 +00002 +00003 +00010 +00005 +00002 +00003 +00000 
 
 PersistantStorage: 
  TYPE:	Solid State Drive
@@ -189,42 +189,10 @@ File System:
 
 
 SymbolTable 
-Avail= 94 
-count= 1 
+Avail= 99 
+count= 0 
  
 Node: HEADNODE 
 Location: 0 
-Initial Value: null 
- 
-Node: TOP 
-Location: 1 
-Initial Value: null 
- 
-Node: DONE 
-Location: 11 
-Initial Value: null 
- 
-Node: VEE 
-Location: 99 
-Initial Value: +00002 
- 
-Node: DATACONTROL 
-Location: 13 
-Initial Value: null 
- 
-Node: ECKS 
-Location: 98 
-Initial Value: null 
- 
-Node: WHY 
-Location: 97 
-Initial Value: null 
- 
-Node: ZED 
-Location: 96 
-Initial Value: null 
- 
-Node: TEE 
-Location: 95 
-Initial Value: null 
+Initial Value: 0 
  
