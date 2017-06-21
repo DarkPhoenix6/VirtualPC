@@ -1,0 +1,18 @@
+A = 3
+B = 2
+C = D + B * B / A - 3 + 6 * 9
+D = A + B
+IF: D == 5
+C += 2
+FI:
+X = 3
+OUT C
+WHILE: X > -1
+X -= 1
+C += X
+OUT C
+ELIHW:
+OUT D
+D += C
+OUT D
+EXIT

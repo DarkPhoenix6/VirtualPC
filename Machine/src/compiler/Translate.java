@@ -43,6 +43,7 @@ public class Translate {
 	private int ifCount;
 	private int ifFailCount;
 	private int ifVarCount;
+	private int ifLabelCount;
 	/**
 	 * @Description The Current Math Expression Variable Number 
 	 */
@@ -60,6 +61,7 @@ public class Translate {
 		ifVarCount = 0;
 		ifFailCount = 0;
 		mathVarCount = 0;
+		ifLabelCount = 0;
 	}
 	
 	
@@ -129,6 +131,16 @@ public class Translate {
 	}
 
 	/**
+	 * @return the ifLableCount
+	 */
+	public int getIfLabelCount() {
+		return ifLabelCount;
+	}
+
+
+
+
+	/**
 	 * @param arr
 	 * @param string
 	 * @return The First Index Of the Selected CharSequence or -1 of not found
@@ -172,6 +184,16 @@ public class Translate {
 	public void setMathVarCount(int mathVarCount) {
 		this.mathVarCount = mathVarCount;
 	}
+
+
+	/**
+	 * @param ifLableCount the ifLableCount to set
+	 */
+	public void setIfLabelCount(int ifLableCount) {
+		this.ifLabelCount = ifLableCount;
+	}
+
+
 
 
 	/**
@@ -328,6 +350,13 @@ public class Translate {
 	}
 	
 	/**
+	 * @Description Increment the If Label Counter
+	 */
+	protected void incIfLabelCounter()
+	{
+		this.setIfLabelCount( this.getIfLabelCount() + 1 );
+	}
+	/**
 	 * @Description Increment the IfVarCounter
 	 */
 	protected void incIfVarCounter()
@@ -467,7 +496,7 @@ public class Translate {
 			}
 			else
 			{
-				InvalidCommandException ICE = new InvalidCommandException();
+				InvalidCommandException ICE = new InvalidCommandException( instructions[i] );
 				throw ICE;
 			}
 			
@@ -488,11 +517,11 @@ public class Translate {
 	 */
 	public String[] translate( String[] instructions )
 	{
-		//String[] temp = translateLoops( instructions );
-		String[] temp = getMath( instructions );
+		String[] temp = translateLoops( instructions );
+		//String[] temp = getMath( instructions );
 		//return temp;
-		//temp = getIfStatments( temp );
-		//temp = getAssignments( temp );
+		temp = getIfStatment( temp, 0, 0, 0, false );
+		temp = getMath( temp );
 		return getAssignments( temp );
 		
 		
@@ -508,94 +537,9 @@ public class Translate {
 		String loopReturn = new String("LOOPRETURN" + loopCount );
 		String[] returnString = null;
 		
-		String[] postWhile = null;
-		/**
-		 * @Description Contains the Array of instructions Before the WHILE Loop
-		 */
-		String[] preWhile = null;
-		String[] whileString = new String[ elihwSpot - whileSpot - 2];
-		String[] ifString = translateLogicSymbols( instructions[ whileSpot ].substring( 
-				instructions[ whileSpot ].indexOf(":") + 2),  loopLable,  loopReturn );
+
 		String temp = null;
 
-		if ( whileSpot > 0 )
-		{
-			preWhile = new String[ whileSpot ];
-			
-			int i = 0;
-			while ( i < whileSpot )
-			{
-				preWhile[ i ] = new String( instructions[ i ] );
-			}
-			
-		}
-		
-		if ( elihwSpot < instructions.length - 1 )
-		{
-			postWhile = new String[ instructions.length - elihwSpot ];
-			int i = elihwSpot + 1;
-			while ( i < instructions.length )
-			{
-				postWhile[ i ] = new String( instructions[ i ] );
-			}
-			
-		}
-		int j = 0;
-		for ( int i = whileSpot + 1; i < elihwSpot; i++ )
-		{
-			whileString[ j ] = new String( instructions[ i ] );
-			j++;
-		}
-		
-	
-		if ( preWhile != null )
-		{
-			for ( String S : preWhile )
-			{
-				if ( temp == null )
-				{
-					temp = new String( S + " \n" );
-				}
-				else
-				{
-					temp += S + " \n";
-				}
-			}
-		}
-		
-		for ( String S : whileString )
-		{
-			if ( temp == null )
-			{
-				temp = new String( S + " \n" );
-			}
-			else
-			{
-				temp += S + " \n";
-			}
-		}
-		
-		for ( String S : ifString )
-		{
-			temp += S + " \n";
-		}
-		
-		if ( postWhile != null )
-		{
-			for ( int i = 0; i < postWhile.length - 1; i++ )
-			{
-				if ( i == 0 )
-				{
-					temp += loopReturn + ": " + postWhile[ i ] + " \n";
-				}
-				else
-				{
-					temp += postWhile[ i ] + " \n";
-				}
-			}
-			
-			temp += postWhile[postWhile.length - 1];
-		}
 		
 		returnString = temp.split("\\s\n");
 
@@ -929,10 +873,17 @@ public class Translate {
 		
 		if ( instruction.contains(" = ") )
 		{
-			String[] temp =  instruction.split("\\s=\\s");
-			String returnString = "LD " + temp[1] + " \n" + "STO " + temp[0] + " \n";
-			return returnString;
-			
+			if ( instruction.contains(":") )
+			{
+				String[] temp =  instruction.split(":\\s", 2);
+				return temp[0] + ": " + this.translateAssignmentOperators(temp[1]);
+			}
+			else
+			{
+				String[] temp =  instruction.split("\\s=\\s");
+				String returnString = "LD " + temp[1] + " \n" + "STO " + temp[0] + " \n";
+				return returnString;
+			}
 		}
 		else
 		{
@@ -944,147 +895,7 @@ public class Translate {
 
 	/**
 	 * 
-	 * @param instruction
-	 * @param branchLable
-	 * @param branchReturn
-	 * @param ANDFlag
-	 * @param ORFlag
-	 * @return
-	 */
-	public String translateIfs( String instruction, String branchLable, String branchReturn, boolean ANDFlag, boolean ORFlag  )
-	{
-		//TODO
-		String[] S = null;
-		String ifString = null;
-		
-		if ( instruction.contains(" AND ") || instruction.contains(" && ") ) // Contains conditional "AND"
-		{
-			if ( instruction.contains(" AND ") )
-			{
-				S = instruction.split( "\\sAND\\s", 2 );
-			}
-			else if ( instruction.contains(" && ") )
-			{
-				S = instruction.split( "\\s&&\\s", 2 );
-			}
-			return translateIfs( S[0], "IF" + getIfCount() + ": ", branchReturn, true, ORFlag ) + " \n" + 
-				translateIfs( S[0], "IF" + getIfCount() + ": ", branchReturn, ANDFlag, ORFlag) ;
-		}
-		else if ( instruction.contains(" OR ") || instruction.contains(" || ") ) // Contains conditional "OR" 
-		{
-			if ( instruction.contains(" OR ") )
-			{
-				S = instruction.split( "\\sOR\\s", 2 );
-			}
-			else if ( instruction.contains(" || ") )
-			{
-				S = instruction.split( "\\s\\|\\|\\s", 2 );
-			}
-			return translateIfs( S[0], branchLable, branchReturn, ANDFlag, true ) + " \n" + branchLable +
-					": " + translateIfs( S[0], "IF" + getIfCount() + ": ", branchReturn, ANDFlag, ORFlag);
-		}
-		else if ( instruction.contains(" CONDITIONAL ") || instruction.contains(" ?: ") )
-		{
-			
-		}
-		else if ( instruction.contains(" <= ") )
-		{
-			S = instruction.split( "\\s<=\\s", 2 );
-			if( ! ORFlag )
-			{
-				ifString = new String( "LD " + translateIfs( S[0], "IF" + getIfCount() + ": ", branchReturn, ANDFlag, ORFlag) + " \nSUB " + 
-						translateIfs( S[0], "IF" + getIfCount() + ": ", branchReturn, ANDFlag, ORFlag) + " \nBGTR " + branchReturn );
-				return ifString;
-			}
-			else if( !ANDFlag && ORFlag )
-			{
-				ifString = new String( "LD " + translateIfs( S[1], "IF" + getIfCount() + ": ", branchReturn, ANDFlag, ORFlag) + " \nSUB " + 
-						translateIfs( S[0], "IF" + getIfCount() + ": ", branchReturn, ANDFlag, ORFlag) + " \nBGTR " + branchLable + " \nBZ "
-						+ branchLable);
-				return ifString;
-			}
-			else if( ANDFlag && ORFlag )
-			{
-				ifString = new String( "LD " + translateIfs( S[1], "IF" + getIfCount() + ": ", branchReturn, ANDFlag, ORFlag) + " \nSUB " + 
-						translateIfs( S[0], "IF" + getIfCount() + ": ", branchReturn, ANDFlag, ORFlag) + " \nBGTR " + branchLable + " \nBZ "
-						+ branchLable);
-				return ifString;
-			}
-		}
-		else if ( instruction.contains(" < ") )
-		{
-			S = instruction.split( "\\s<\\s", 2 );
-			if( ! ORFlag )
-			{
-				ifString = new String( "LD " + translateIfs( S[0], "IF" + getIfCount() + ": ", branchReturn, ANDFlag, ORFlag) + " \nSUB " + 
-						translateIfs( S[0], "IF" + getIfCount() + ": ", branchReturn, ANDFlag, ORFlag) + " \nBGTR " + branchReturn + " \nBZ "
-						+ branchReturn );
-				return ifString;
-			}
-			else if( !ANDFlag && ORFlag )
-			{
-				ifString = new String( "LD " + translateIfs( S[1], "IF" + getIfCount() + ": ", branchReturn, ANDFlag, ORFlag) + " \nSUB " + 
-						translateIfs( S[0], "IF" + getIfCount() + ": ", branchReturn, ANDFlag, ORFlag) + " \nBGTR " + branchLable);
-				return ifString;
-			}
-			else if( ANDFlag && ORFlag )
-			{
-				ifString = new String( "LD " + translateIfs( S[1], "IF" + getIfCount() + ": ", branchReturn, ANDFlag, ORFlag) + " \nSUB " + 
-						translateIfs( S[0], "IF" + getIfCount() + ": ", branchReturn, ANDFlag, ORFlag) + " \nBGTR " + branchLable);
-				return ifString;
-			}
-		}
-		else if ( instruction.contains(" >= ") )
-		{
-			S = instruction.split( "\\s>=\\s", 2 );
-			if( ! ORFlag )
-			{
-				ifString = new String( "LD " + " \nSUB " + translateIfs( S[0], "IF" + getIfCount() + ": ", branchReturn, ANDFlag, ORFlag) + 
-						translateIfs( S[0], "IF" + getIfCount() + ": ", branchReturn, ANDFlag, ORFlag) + " \nBGTR " + branchReturn );
-				return ifString;
-			}
-			else if( !ANDFlag && ORFlag )
-			{
-				ifString = new String( "LD " + " \nSUB " + translateIfs( S[1], "IF" + getIfCount() + ": ", branchReturn, ANDFlag, ORFlag) + 
-						translateIfs( S[0], "IF" + getIfCount() + ": ", branchReturn, ANDFlag, ORFlag) + " \nBGTR " + branchLable + " \nBZ "
-						+ branchLable);
-				return ifString;
-			}
-			else if( ANDFlag && ORFlag )
-			{
-				ifString = new String( "LD " + " \nSUB " + translateIfs( S[1], "IF" + getIfCount() + ": ", branchReturn, ANDFlag, ORFlag) + 
-						translateIfs( S[0], "IF" + getIfCount() + ": ", branchReturn, ANDFlag, ORFlag) + " \nBGTR " + branchLable + " \nBZ "
-						+ branchLable);
-				return ifString;
-			}
-		}
-		else if ( instruction.contains(" > ") )
-		{
-			S = instruction.split( "\\s>\\s", 2 );
-			if( ! ORFlag )
-			{
-				ifString = new String( "LD " + " \nSUB " + translateIfs( S[0], "IF" + getIfCount() + ": ", branchReturn, ANDFlag, ORFlag) + 
-						translateIfs( S[0], "IF" + getIfCount() + ": ", branchReturn, ANDFlag, ORFlag) + " \nBGTR " + branchReturn + " \nBZ "
-						+ branchReturn );
-				return ifString;
-			}
-			else if( !ANDFlag && ORFlag )
-			{
-				ifString = new String( "LD " + " \nSUB " + translateIfs( S[1], "IF" + getIfCount() + ": ", branchReturn, ANDFlag, ORFlag) + 
-						translateIfs( S[0], "IF" + getIfCount() + ": ", branchReturn, ANDFlag, ORFlag) + " \nBGTR " + branchLable);
-				return ifString;
-			}
-			else if( ANDFlag && ORFlag )
-			{
-				ifString = new String( "LD " + " \nSUB " + translateIfs( S[1], "IF" + getIfCount() + ": ", branchReturn, ANDFlag, ORFlag) + 
-						translateIfs( S[0], "IF" + getIfCount() + ": ", branchReturn, ANDFlag, ORFlag) + " \nBGTR " + branchLable);
-				return ifString;
-			}
-		}
-		
-		
-		return instruction;
-	}
+	
 
 	/**
 	 * 
@@ -1167,60 +978,6 @@ public class Translate {
 	/**
 	 * 
 	 * @param instructions
-	 * @param count
-	 * @param didCheck
-	 * @return
-	 */
-	public String[] getWhileLoop( String[] instructions, int count, boolean didCheck ) {
-		// TODO Auto-generated method stub
-		
-		if ( count > 0 || didCheck == false)
-		{
-			int whileCount = 0;
-			int elihwCount = 0;
-			count = 0;
-			int whileSpot = 0;
-			for ( int i = 0; i < instructions.length; i++ )
-			{
-				String[] temp = instructions[i].split("\\s");
-				if ( this.findIndexInArray(temp, "WHILE:") != -1 )
-				{
-					count++;
-					whileCount++;
-					if ( count == 1 )
-					{
-						whileSpot = i;
-					}
-				}
-				
-				if ( this.findIndexInArray(temp, "ELIHW:") != -1 )
-				{
-					elihwCount++;
-				}
-				
-				if ( whileCount == elihwCount && elihwCount > 0 )
-				{
-					String[] returnString = translateWhileLoop( instructions, whileSpot, i );
-					return getWhileLoop( returnString, count, true );
-				}
-
-				
-			}
-			
-			return getWhileLoop( instructions, count, true );
-			
-		}
-		else
-		{
-			return instructions;
-		}
-		
-		
-	}
-	
-	/**
-	 * 
-	 * @param instructions
 	 * @return
 	 */
 	public String[] getMath( String[] instructions )
@@ -1275,108 +1032,14 @@ public class Translate {
 		return returnString;
 	}
 	
-	/**
-	 * @param returnString
-	 * @param i
-	 * @param b
-	 * @return returns the instruction Set with logic expressions translate
-	 */
-	@SuppressWarnings("unused")
-	private String[] getConditionals(String[] instructions) {
-
-		String temp = null;
-		int ifCounter = 0;
-		int elseIfCounter = 0;
-		int elseCounter = 0;
-		String[] returnString = null;
-		for ( String S : instructions )
-		{
-			
-			String[] Temp = this.SimplifyConditionals(S, null).split("\\s\n");
-			if( this.findIndexInArray( Temp, "IF:" ) != -1 || this.findIndexInArray( Temp, "ELSEIF:" ) != -1 ||
-					this.findIndexInArray( Temp, "ELSE:" ) != -1)
-			{
-				
-				
-			}
-			else
-			{
-				if ( temp == null )
-				{
-					temp = this.translateConditionals( S, false );
-				}
-				else
-				{
-					temp += this.translateConditionals( S, false );
-				}
-			}
-		}
-		
-		
-		returnString = temp.split("\\s\n");
-		
-		return returnString;
-
-	}
-	
-	/**
-	 * 
-	 * @param instructions
-	 * @param lable
-	 * @return
-	 */
-	private String getConditionals(String[] instructions, String lable ) {
-
-		String temp = null;
-		String returnString = null;
-		for ( int i = 0; i < instructions.length; i++ )
-		{
-			
-			String[] Temp = this.SimplifyConditionals(instructions[i], null).split("\\s\n");
-			if( this.findIndexInArray( Temp, "IF:" ) != -1 || this.findIndexInArray( Temp, "ELSEIF:" ) != -1 )
-			{
-				this.setIfVarCount(0);
-				for ( String I : Temp)
-				{
-					if ( temp == null )
-					{
-						temp = this.translateConditionals( I, false );
-					}
-					else
-					{
-						temp += this.translateConditionals( I, false );
-					}
-				}
-				temp += "BZ IFRETURN" + this.getIfCount();
-				this.incIfCount();
-				
-			}
-			else
-			{
-				if ( temp == null )
-				{
-					temp = this.translateConditionals( instructions[i], false );
-				}
-				else
-				{
-					temp += this.translateConditionals( instructions[i], false );
-				}
-			}
-		}
-		
-		return returnString;
-
-	}
 	
 	/**
 	 * @param instructions	The Instruction Set
 	 * @param ifSpot 		The First Index of the If Statement
 	 * @param lastIndex 	The Last Index of the If Statement
-	 * @return
+	 * @return 
 	 */
 	private String[] getConditionals(String[] instructions, int ifSpot, int lastIndex) {
-		// TODO Auto-generated method stub
-		// preIF + translatedIF + IFBlock + IFRETURN + GetIfCount() + ": " + postIF
 		String temp = null;
 		String[] returnString = null;
 		int index = -1;
@@ -1392,18 +1055,18 @@ public class Translate {
 					index = this.findIndexInArray( Temp, "IF:" );
 					if ( index == 0 )
 					{
-						Temp2 = this.SimplifyConditionals( instructions[i].split("IF:\\s")[0], null).split("\\s\n");
+						Temp2 = this.SimplifyConditionals( instructions[i].substring(instructions[i].indexOf(" ") + 1 ), null).split("\\s\n");
 					}
 					else
 					{
-						Temp2 = this.SimplifyConditionals( instructions[i].split("IF:\\s")[1], null).split("\\s\n");
+						Temp2 = this.SimplifyConditionals( instructions[i].split("\\sIF:\\s")[1], null).split("\\s\n");
 						if ( temp == null )
 						{
-							temp = instructions[i].split("IF:\\s")[0] +" ";
+							temp = instructions[i].split("\\sIF:\\s")[0] + " ";
 						}
 						else
 						{
-							temp += instructions[i].split("IF:\\s")[0] +" ";
+							temp += instructions[i].split("\\sIF:\\s")[0] + " ";
 						}
 					}
 					
@@ -1413,14 +1076,14 @@ public class Translate {
 				else if( this.findIndexInArray( Temp, "ELSEIF:" ) != -1 )
 				{
 					index = this.findIndexInArray( Temp, "ELSEIF:" );
-					Temp2 = this.SimplifyConditionals( instructions[i].split("ELSEIF:\\s")[1], null).split("\\s\n");
+					Temp2 = this.SimplifyConditionals( instructions[i].split("\\sELSEIF:\\s")[1], null).split("\\s\n");
 					ifReturn = Temp[1];
 					
 				}
 				else if ( this.findIndexInArray( Temp, "ELSE:" ) != -1 )
 				{
 					index = this.findIndexInArray( Temp, "ELSE:" );
-					Temp2 = this.SimplifyConditionals( instructions[i].split("ELSE:\\s")[1], null).split("\\s\n");
+					Temp2 = this.SimplifyConditionals( instructions[i].split("\\sELSE:\\s")[1], null).split("\\s\n");
 					ifReturn = Temp[1];
 				}
 				
@@ -1431,18 +1094,19 @@ public class Translate {
 					{
 						if ( temp == null )
 						{
-							temp = this.translateConditionals( S, false) + " \n";
+							temp = this.translateConditionals( S) + " \n";
 						}
 						else
 						{
-							temp += this.translateConditionals( S, false ) + " \n";
+							temp += this.translateConditionals( S ) + " \n";
 						}
 					}
-					
+					String[] Temp3 = temp.split("\\s");
+					temp += "LD " + Temp3[Temp3.length - 1] + " \n";
 					temp += "BZ " + ifReturn + " \n";
 				}
 			}
-			else if ( i == lastIndex )
+			else if ( i == lastIndex ) // 
 			{
 				if ( temp == null )
 				{
@@ -1474,6 +1138,80 @@ public class Translate {
 		return returnString;
 		
 	}
+
+	/**
+	 * 
+	 * @param instructions
+	 * @param count
+	 * @param didCheck
+	 * @return
+	 */
+	public String[] getWhileLoop( String[] instructions, int count, boolean didCheck ) {
+		// TODO Auto-generated method stub
+		String loopLable = new String("LOOP" + loopCount );
+		String loopReturn = new String("LOOPRETURN" + loopCount );
+		String[] returnString = null;
+		if ( count > 0 || didCheck == false)
+		{
+			int whileCount = 0;
+			int elihwCount = 0;
+			count = 0;
+
+			
+			for ( int i = 0; i < instructions.length; i++ )
+			{
+				String[] temp = instructions[i].split("\\s");
+				if ( this.findIndexInArray(temp, "WHILE:") != -1 )
+				{
+					count++;
+					whileCount++;
+					if ( count == 1 )
+					{
+						//whileSpot = i;
+						if ( this.findIndexInArray(temp, "WHILE:") == 0 )
+						{
+							instructions[i] = new String( loopLable + ": IF: " + instructions[i].substring( instructions[i].indexOf(" ") + 1 ));
+						}
+						else
+						{
+							instructions[i] = new String( instructions[i].split("\\sWHILE:\\s")[0] + " " + loopLable + ": IF: " + instructions[i].split("\\sWHILE:\\s")[1]);
+						}
+						
+					}
+				}
+				
+				if ( this.findIndexInArray(temp, "ELIHW:") != -1 )
+				{
+					elihwCount++;
+					
+				}
+				
+				if ( whileCount == elihwCount && elihwCount > 0 )
+				{
+					instructions[i] = new String( "BR " + loopLable + " \nFI:" );
+					//String[] returnString = translateWhileLoop( instructions, whileSpot, i );
+					this.incLoopCount();
+					//return getWhileLoop( returnString, count, true );
+					return this.getWhileLoop(instructions, count, true);
+				}
+	
+				
+			}
+			
+			return getWhileLoop( instructions, count, true );
+			
+		}
+		else
+		{
+			return instructions;
+		}
+		
+		
+	}
+	
+
+
+
 
 	/**
 	 * 
@@ -1555,9 +1293,9 @@ public class Translate {
 					}
 				}
 				
-				if ( this.findIndexInArray(temp, "FIESLE:") != -1 )
+				if ( this.findIndexInArray(temp, "ESLE:") != -1 )
 				{
-					fiEsleCounter++;
+					esleCounter++;
 				}
 				
 				if ( elseCounter == esleCounter && esleCounter > 0 )
@@ -1579,9 +1317,9 @@ public class Translate {
 	}
 	
 	/**
-	 * @param s
-	 * @param b
-	 * @param object
+	 * 
+	 * @param instruction
+	 * @param IfVarString
 	 * @return
 	 */
 	private String SimplifyConditionals(String instruction, String IfVarString) {
@@ -1698,7 +1436,7 @@ public class Translate {
 		{
 			if (  IfVarString != null )
 			{
-				return IfVarString + instruction;
+				return IfVarString ;
 			}
 			else
 			{
@@ -1773,8 +1511,182 @@ public class Translate {
 	 * @param isChecked
 	 * @return
 	 */
-	public String translateConditionals( String instruction, boolean isChecked )
+	public String translateConditionals( String instruction )
 	{
-		return null;
+		
+		//TODO
+		String temp = null;
+		String[] S = null;
+		String label = new String( "IFLABEL" + this.getIfLabelCount() );
+		String endLabel = new String( "IFLABEL" + this.getIfLabelCount() + "END" );
+
+
+		if ( instruction.contains(" <= ") )
+			// If Less-Then-or-Equal-to
+		{
+			if  ( instruction.contains(" = ") )
+			{
+				S = instruction.split( "\\s=\\s" );
+				temp = new String( "BZ " + label + " \nBGTR " + label + " \nLD 0 \nBR " + endLabel + " \n" + label + 
+						": LD 1 \n" + endLabel + ": STO " + S[0] );
+				this.incIfLabelCounter();
+				return this.translateConditionals(S[1]) + temp;
+			}
+			else
+			{
+				S = instruction.split( "\\s<=\\s" );
+				temp = new String("LD " + S[1] + " \nSUB " + S[0] + " \n" );
+				return temp;
+			}
+		}
+		else if ( instruction.contains(" < ") )
+			// Else If Less-Than
+		{
+			if  ( instruction.contains(" = ") )
+			{
+				S = instruction.split( "\\s=\\s" );
+				temp = new String("BGTR " + label + " \nLD 0 \nBR " + endLabel + " \n" + label + 
+						": LD 1 \n" + endLabel + ": STO " + S[0] );
+				this.incIfLabelCounter();
+				return this.translateConditionals(S[1]) + temp;
+			}
+			else
+			{
+				S = instruction.split( "\\s<\\s" );
+				temp = new String("LD " + S[1] + " \nSUB " + S[0] + " \n" );
+				return temp;
+			}
+		}
+		else if ( instruction.contains(" >= ") )
+			// Else If Greater-Than-Equal-to
+		{
+			if  ( instruction.contains(" = ") )
+			{
+				S = instruction.split( "\\s=\\s" );
+				temp = new String( "BZ " + label + " \nBGTR " + label + " \nLD 0 \nBR " + endLabel + " \n" + label + 
+						": LD 1 \n" + endLabel + ": STO " + S[0] );
+				this.incIfLabelCounter();
+				return this.translateConditionals(S[1]) + temp;
+			}
+			else
+			{
+				S = instruction.split( "\\s>=\\s" );
+				temp = new String("LD " + S[0] + " \nSUB " + S[1] + " \n" );
+				return temp;
+			}
+		}
+		else if ( instruction.contains(" > ") ) 
+			// Else If Greater-Than
+		{
+			if  ( instruction.contains(" = ") )
+			{
+				S = instruction.split( "\\s=\\s" );
+				temp = new String("BGTR " + label + " \nLD 0 \nBR " + endLabel + " \n" + label + 
+						": LD 1 \n" + endLabel + ": STO " + S[0] );
+				this.incIfLabelCounter();
+				return this.translateConditionals(S[1]) + temp;
+			}
+			else
+			{
+				S = instruction.split( "\\s>\\s" );
+				temp = new String("LD " + S[0] + " \nSUB " + S[1] + " \n" );
+				return temp;
+			}
+		}
+		else if ( instruction.contains(" == ") )
+			// Else If Equal-to
+		{
+			S = instruction.split("\\s==\\s");
+			if  ( instruction.contains(" = ") )
+			{
+				S = instruction.split( "\\s=\\s" );
+				temp = new String( "BZ " + label + " \nLD 0 \nBR " + endLabel + " \n" + label + 
+						": LD 1 \n" + endLabel + ": STO " + S[0] );
+				this.incIfLabelCounter();
+				return this.translateConditionals(S[1]) + temp;
+			}
+			else
+			{
+				S = instruction.split( "\\s==\\s" );
+				temp = new String("LD " + S[0] + " \nSUB " + S[1] + " \n" );
+				return temp;
+			}
+		}
+		else if ( instruction.contains(" != ") )
+			// Else If Not-Equal-to
+		{
+			S = instruction.split("\\s==\\s");
+			if  ( instruction.contains(" = ") )
+			{
+				S = instruction.split( "\\s=\\s" );
+				temp = new String( "BZ " + label + " \nLD 1 \nBR " + endLabel + " \n" + label + 
+						": LD 0 \n" + endLabel + ": STO " + S[0] );
+				this.incIfLabelCounter();
+				return this.translateConditionals(S[1]) + temp;
+			}
+			else
+			{
+				S = instruction.split( "\\s!=\\s" );
+				temp = new String("LD " + S[0] + " \nSUB " + S[1] + " \n" );
+				return temp;
+			}
+		}
+		else if ( instruction.contains(" AND ") || instruction.contains(" && ") ) // Contains conditional "AND"
+		{
+			if  ( instruction.contains(" = ") )
+			{
+				S = instruction.split( "\\s=\\s" );
+				temp = new String( "BZ " + label + " \nLD 0 \nBR " + endLabel + " \n" + label + 
+						": LD 1 \n" + endLabel + ": STO " + S[0] );
+				this.incIfLabelCounter();
+				return this.translateConditionals(S[1]) + temp;
+			}
+			else
+			{
+				if ( instruction.contains(" AND ") )
+				{
+					S = instruction.split( "\\sAND\\s" );
+				}
+				else
+				{
+					S = instruction.split( "\\s&&\\s" );
+				}
+				
+				temp = new String("LD " + S[0] + " \nADD " + S[1] + " \nSUB 2 \n" );
+				return temp;
+			}
+		}
+		else if ( instruction.contains(" OR ") || instruction.contains(" || ") ) // Contains conditional "OR" 
+		{
+			if  ( instruction.contains(" = ") )
+			{
+				S = instruction.split( "\\s=\\s" );
+				temp = new String( "BGTR " + label + " \nBZ " + label + " \nLD 0 \nBR " + endLabel + " \n" + label + 
+						": LD 1 \n" + endLabel + ": STO " + S[0] + " \n" );
+				this.incIfLabelCounter();
+				return this.translateConditionals(S[1]) + temp;
+			}
+			else
+			{
+				if ( instruction.contains(" OR ") )
+				{
+					S = instruction.split( "\\sOR\\s" );
+				}
+				else
+				{
+					S = instruction.split( "\\s\\|\\|\\s" );
+				}
+				
+				temp = new String("LD " + S[0] + " \nADD " + S[1] + " \n"  );
+				return temp;
+			}
+		}
+		else if ( instruction.contains(" CONDITIONAL ") || instruction.contains(" ?: ") )
+		{
+			
+		}
+		
+		
+		return instruction;
 	}
 }

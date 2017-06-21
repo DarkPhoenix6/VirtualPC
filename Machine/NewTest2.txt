@@ -1,0 +1,13 @@
+A = 3
+B = 2
+C = A + B * C / D - 3 + 6 * 9
+D = A + B
+IF: D == 0
+C += 2
+FI:
+IN D
+OUT C
+OUT D
+D += C
+OUT D
+EXIT

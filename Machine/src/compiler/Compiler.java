@@ -100,7 +100,7 @@ public class Compiler {
 	 */
 	private static void passOne(Translate t, SymbolTableList SymbolTable, ReadFile read, WriteFile write)
 			throws OutOfMemoryException, IOException {
-		read.openFile("NewTest.txt");
+		read.openFile("NewTest3.txt");
 		//read.openFile("stuffTest.txt");
 		//read.openFile("ToBeCompiled.txt");
 		String[] preTrans = read.getInstructions();

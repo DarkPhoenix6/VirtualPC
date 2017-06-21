@@ -1,13 +1,49 @@
 SymbolTable 
-Avail= 84 
-count= 35 
+Avail= 77 
+count= 76 
  
 Node: HEADNODE 
 Location: 0 
 Initial Value: 0 
  
-Node: DONE 
+Node: IFLABEL0 
 Location: 34 
+Initial Value: 0 
+ 
+Node: IFLABEL0END 
+Location: 35 
+Initial Value: 0 
+ 
+Node: IFFAIL0 
+Location: 43 
+Initial Value: 0 
+ 
+Node: IFRETURN0 
+Location: 43 
+Initial Value: 0 
+ 
+Node: LOOP0 
+Location: 46 
+Initial Value: 0 
+ 
+Node: IFLABEL1 
+Location: 51 
+Initial Value: 0 
+ 
+Node: IFLABEL1END 
+Location: 52 
+Initial Value: 0 
+ 
+Node: IFFAIL1 
+Location: 67 
+Initial Value: 0 
+ 
+Node: IFRETURN1 
+Location: 67 
+Initial Value: 0 
+ 
+Node: DONE 
+Location: 75 
 Initial Value: 0 
  
 Node: A 
@@ -22,51 +58,79 @@ Node: B
 Location: 97 
 Initial Value: 0 
  
-Node: C 
+Node: Math0 
 Location: 96 
 Initial Value: 0 
  
-Node: Math0 
+Node: Math1 
 Location: 95 
 Initial Value: 0 
  
-Node: D 
+Node: Math2 
 Location: 94 
 Initial Value: 0 
  
-Node: Math1 
+Node: D 
 Location: 93 
 Initial Value: 0 
  
-Node: Math2 
+Node: Math3 
 Location: 92 
 Initial Value: 0 
  
-Node: Math3 
+Node: Math4 
 Location: 91 
 Initial Value: 0 
  
-Node: Math4 
+Node: Math5 
 Location: 90 
 Initial Value: 0 
  
-Node: Math5 
+Node: C 
 Location: 89 
 Initial Value: 0 
  
-Node: PLUS3 
+Node: IF0 
 Location: 88 
+Initial Value: 0 
+ 
+Node: X 
+Location: 87 
+Initial Value: 0 
+ 
+Node: IF1 
+Location: 86 
+Initial Value: 0 
+ 
+Node: PLUS3 
+Location: 85 
 Initial Value: 3 
  
 Node: PLUS2 
-Location: 87 
+Location: 84 
 Initial Value: 2 
  
 Node: PLUS6 
-Location: 86 
+Location: 83 
 Initial Value: 6 
  
 Node: PLUS9 
-Location: 85 
+Location: 82 
 Initial Value: 9 
+ 
+Node: PLUS5 
+Location: 81 
+Initial Value: 5 
+ 
+Node: ZERO 
+Location: 80 
+Initial Value: 0 
+ 
+Node: PLUS1 
+Location: 79 
+Initial Value: 1 
+ 
+Node: MINUS1 
+Location: 78 
+Initial Value: -1 
  
