@@ -23,7 +23,8 @@ public class Program {
 	private final static short GREATEST = 4;
 	private final static short SMALLEST = 5;
 	private final static short SUMMATIONOFSERIES = 6;
-	private static final short numberOfFiles = 7;
+	private final static short TEST = 7;
+	private static final short numberOfFiles = 8;
 	private static Scanner scan;
 	
 	/**
@@ -102,6 +103,20 @@ public class Program {
 		return program;
 	}
 
+	private static short[] testProgram()
+	{
+		short[] program = { 184, 297, 197, 597, 296, 183, 196, 699, 295, 182,
+				581, 294, 193, 299, 395, 292, 192, 484, 291, 191,
+				394, 290, 190, 289, 199, 397, 296, 196, 293, 184,
+				288, 889, 188, 480, 1137, 179, 938, 178, 287, 188, 
+				480, 1044, 179, 945, 178, 286, 187, 386, 1152, 1052, 
+				179, 953, 178, 285, 185, 1062, 189, 388, 296, 196,
+				289, 889, 893, 193, 389, 296, 196, 293, 893, 970, 
+				0, 0, 0, 0, 0, 0, 0, 0, 1, 0,
+				-1, 9, 6, 2, 3, 0, 0, 0, 0, 0,
+				0, 0, 0, 0, 0, 0, 0, 0, 0, 0 };
+		return program;
+	}
 	/**
 	 * 
 	 */
@@ -137,7 +152,10 @@ public class Program {
 			{
 				return summingAnArithmeticSeries();
 			}
-			
+			case TEST:
+			{
+				return testProgram();
+			}
 		}
 		return null;
 		

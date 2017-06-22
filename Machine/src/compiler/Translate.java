@@ -41,7 +41,6 @@ public class Translate {
 	 * @Description The Current If Statement Number 
 	 */
 	private int ifCount;
-	private int ifFailCount;
 	private int ifVarCount;
 	private int ifLabelCount;
 	/**
@@ -59,7 +58,6 @@ public class Translate {
 		loopCount = 0;
 		ifCount = 0;
 		ifVarCount = 0;
-		ifFailCount = 0;
 		mathVarCount = 0;
 		ifLabelCount = 0;
 	}
@@ -434,16 +432,12 @@ public class Translate {
 						MULTIPLY + SymbolTable.getLocation(instructions[i + 1] )) );
 			}
 		
-		
-		
-		
+
 			else if ( instructions[i].contains("DIV") )
 			{
 				returnString[a] = new String( String.valueOf(
 						DIVIDE + SymbolTable.getLocation(instructions[i + 1] )) );
 			}
-		
-		
 		
 			else if ( instructions[i].contains("IN") )
 			{
@@ -451,38 +445,28 @@ public class Translate {
 						INPUT + SymbolTable.getLocation(instructions[i + 1] )) );
 			}
 		
-					
-		
 			else if ( instructions[i].contains("OUT") )
 			{
 				returnString[a] = new String( String.valueOf(
 						OUTPUT + SymbolTable.getLocation(instructions[i + 1] )) );
 			}
 		
-		
-		
 			else if ( instructions[i].contains("BR") || instructions[i].matches("BR")  )
 			{
 				returnString[a] = new String( String.valueOf(
 						BRANCH + SymbolTable.getLocation(instructions[i + 1] )) );
 			}
-		
-		
-	
+
 			else if ( instructions[i].contains("BRIF0") || instructions[i].contains("BZ") )
 			{
 				returnString[a] = new String( String.valueOf(
 						BRANCHif0 + SymbolTable.getLocation(instructions[i + 1] )) );
 			}
-		
-		
-	
 			else if ( instructions[i].contains("BRGTR") || instructions[i].contains("BGTR"))
 			{
 				returnString[a] = new String( String.valueOf(
 						BRANCHifGTR0 + SymbolTable.getLocation(instructions[i + 1] )) );
 			}
-		
 			else if ( instructions[i].contains("DC") )
 			{
 				returnString[a] = instructions[i+1];
@@ -531,21 +515,6 @@ public class Translate {
 		
 
 
-	public String[] translateWhileLoop( String[] instructions, int whileSpot, int elihwSpot )
-	{
-		String loopLable = new String("LOOP" + loopCount );
-		String loopReturn = new String("LOOPRETURN" + loopCount );
-		String[] returnString = null;
-		
-
-		String temp = null;
-
-		
-		returnString = temp.split("\\s\n");
-
-		incLoopCount();
-		return returnString;
-	}
 
 	
 	public String[] translateLoops(String[] instructions)
@@ -569,12 +538,6 @@ public class Translate {
 
 	}
 	
-	public String[] translateLogicSymbols( String instruction, String loopContinue, String loopReturn )
-	{
-		//TODO
-		String[] returnString = null;
-		return returnString;
-	}
 
 	/**
 	 * @Description Translates Mathematical Symbols Recursively with regards to BEDMAS ( Order of Operations )
@@ -640,7 +603,7 @@ public class Translate {
 			if ( ! instruction.contains(" = ") )
 			{
 				// Check to see which symbol is leftmost 
-				if ( instruction.indexOf("*") < instruction.indexOf("/") && instruction.indexOf("*") > -1 || instruction.indexOf("/") == -1 )
+				if ( instruction.indexOf(" * ") < instruction.indexOf(" / ") && instruction.indexOf(" * ") > -1 || instruction.indexOf(" / ") == -1 )
 					// If Multiplication
 				{
 					temp =  instruction.split("\\s\\*\\s", 2);
@@ -664,7 +627,7 @@ public class Translate {
 			if ( ! instruction.contains(" = ") )
 			{
 				// Check to see which symbol is leftmost 
-				if ( instruction.indexOf("+") < instruction.indexOf("-") && instruction.indexOf("+") > -1 || instruction.indexOf("-") == -1 )
+				if ( instruction.indexOf(" + ") < instruction.indexOf(" - ") && instruction.indexOf(" + ") > -1 || instruction.indexOf(" - ") == -1 )
 					// If Addition
 				{
 					temp =  instruction.split("\\s\\+\\s", 2);
@@ -750,7 +713,7 @@ public class Translate {
 		if ( instruction.contains(" * ") || instruction.contains(" / ") ) // Check for Multiplication and Division
 		{
 			// Check to see which symbol is leftmost 
-			if ( instruction.indexOf("*") < instruction.indexOf("/") && instruction.indexOf("*") > -1 || instruction.indexOf("/") == -1 ) 
+			if ( instruction.indexOf(" * ") < instruction.indexOf(" / ") && instruction.indexOf(" * ") > -1 || instruction.indexOf(" / ") == -1 ) 
 				// If Multiplication
 			{
 				index = findIndexInArray( temp, "\\*" );	
@@ -770,7 +733,7 @@ public class Translate {
 		else if ( instruction.contains(" + ") || instruction.contains(" - ") ) // Check for Addition and Subtraction
 		{
 			// Check to see which symbol is leftmost 
-			if ( instruction.indexOf("+") < instruction.indexOf("-") && instruction.indexOf("+") > -1 || instruction.indexOf("-") == -1 )
+			if ( instruction.indexOf(" + ") < instruction.indexOf(" - ") && instruction.indexOf(" + ") > -1 || instruction.indexOf(" - ") == -1 )
 				// If Addition
 			{
 				index = findIndexInArray( temp, "\\+" );
@@ -786,8 +749,6 @@ public class Translate {
 			return SimplifyMathEquations( returnString, true, MathVar ) ;
 		}
 
-
-		
 		else
 		{
 			if (  MathVarString != null )
@@ -809,7 +770,7 @@ public class Translate {
 	 * @param returnString
 	 * @param mathVarLable
 	 * @param index
-	 * @return The Generated Simplified Equation Variables String
+	 * @return The Generated Simplified Equation String
 	 */
 	private String generateSimplerMathString(String[] temp, String returnString, String mathVarLable, int index) {
 		for ( int i = 0; i < temp.length; i++ )
@@ -846,7 +807,7 @@ public class Translate {
 	 * @param mathVarLable
 	 * @param MathVarString
 	 * @param index
-	 * @return
+	 * @return The Simplified Math Equation Variable String
 	 */
 	private String simpleMathString(String[] temp, String mathVarLable, String MathVarString, int index) {
 		String tempString;
@@ -892,10 +853,6 @@ public class Translate {
 				
 		
 	}
-
-	/**
-	 * 
-	
 
 	/**
 	 * 
@@ -1331,7 +1288,19 @@ public class Translate {
 		int index = -1;
 		temp =  instruction.split("\\s");
 
-		if ( instruction.contains(" < ") || instruction.contains(" <= ") ) // Check for Less-Than(-Equal-To)
+		if ( instruction.contains(" + ") || instruction.contains(" - ") || instruction.contains(" * ") || instruction.contains(" / ") )
+		{
+			String[] temp2 = this.SimplifyMathEquations(instruction, false, null).split("\\s\n");
+			for ( int i = 0; i < temp2.length - 1; i++ )
+			{
+				IfVar = simpleIfString(temp2[i], IfVarString );		
+			}
+			IfVar = this.translateMathSymbols(IfVar, false);
+			returnString = temp2[temp2.length - 1];
+			
+			return SimplifyConditionals( returnString, IfVar );
+		}
+		else if ( instruction.contains(" < ") || instruction.contains(" <= ") ) // Check for Less-Than(-Equal-To)
 		{
 			// Check to see which symbol is leftmost 
 			if ( findIndexInArray( temp, "<" ) < findIndexInArray( temp, "<=" ) && 
@@ -1452,6 +1421,26 @@ public class Translate {
 	 * @param index
 	 * @return
 	 */
+	private String simpleIfString(String temp, String ifVarString) {
+		// TODO Auto-generated method stub
+		
+		if ( ifVarString == null )
+		{
+			ifVarString = temp + " \n";
+		}
+		else
+		{
+			ifVarString += temp + " \n";
+		}
+		return ifVarString;
+	}
+	/**
+	 * @param temp
+	 * @param ifVarLable
+	 * @param ifVarString
+	 * @param index
+	 * @return
+	 */
 	private String simpleIfString(String[] temp, String ifVarLable, String ifVarString, int index) {
 		// TODO Auto-generated method stub
 		String tempString;
@@ -1509,17 +1498,14 @@ public class Translate {
 	 * 
 	 * @param instruction
 	 * @param isChecked
-	 * @return
+	 * @return The Translated Conditional String
 	 */
 	public String translateConditionals( String instruction )
 	{
-		
-		//TODO
 		String temp = null;
 		String[] S = null;
 		String label = new String( "IFLABEL" + this.getIfLabelCount() );
 		String endLabel = new String( "IFLABEL" + this.getIfLabelCount() + "END" );
-
 
 		if ( instruction.contains(" <= ") )
 			// If Less-Then-or-Equal-to
@@ -1662,7 +1648,7 @@ public class Translate {
 			{
 				S = instruction.split( "\\s=\\s" );
 				temp = new String( "BGTR " + label + " \nBZ " + label + " \nLD 0 \nBR " + endLabel + " \n" + label + 
-						": LD 1 \n" + endLabel + ": STO " + S[0] + " \n" );
+						": LD 1 \n" + endLabel + ": STO " + S[0] );
 				this.incIfLabelCounter();
 				return this.translateConditionals(S[1]) + temp;
 			}

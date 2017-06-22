@@ -376,7 +376,10 @@ public class SymbolTableList {
 			{
 				return this.symbolTable( "BR DONE" );
 			}
-			
+			else if ( instruction.compareTo("") == 0 )
+			{
+				return null;
+			}
 			
 		}
 		return instruction; // else return the instruction
@@ -389,15 +392,16 @@ public class SymbolTableList {
 
 	/**
 	 * @param instruction
+	 * @Description
 	 */
 	private void setVarString(String instruction) {
 		if ( varString == null )
 		{
-			varString = new String(instruction.split("\\s")[1] + " ");
+			varString = new String(instruction.split("\\s")[1]);
 		}
 		else
 		{
-			varString += " " + instruction.split("\\s")[1] + " ";
+			varString += " " + instruction.split("\\s")[1];
 		}
 	}
 
@@ -686,7 +690,6 @@ public class SymbolTableList {
 	 * @param string
 	 * @return
 	 */
-	@SuppressWarnings("unused")
 	private boolean isInt(String string) {
 		try
 		{
@@ -701,7 +704,7 @@ public class SymbolTableList {
 	
 	/**
 	 * @param name
-	 * @return
+	 * @return The Location in memory a particular Label/Variable Name points to. Or, if the supplied Name Does Not Exist, it returns -1.
 	 */
 	public int getLocation( String name) {
 		SymbolNode saveSpot = this.getLast();
@@ -748,7 +751,6 @@ public class SymbolTableList {
 			}
 		}
 		
-
 		this.setLast( saveSpot );
 		if ( returnNode != null )
 		{	

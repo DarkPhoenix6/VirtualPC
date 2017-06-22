@@ -19,7 +19,7 @@ public class SolidState extends PersistantStorage {
 	 */
 	public SolidState() {
 		// TODO Auto-generated constructor stub
-		this(100);
+		this(1000);
 		
 	}
 

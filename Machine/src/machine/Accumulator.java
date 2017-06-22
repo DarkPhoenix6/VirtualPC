@@ -18,7 +18,6 @@ public class Accumulator extends MemElem {
 	 * 
 	 */
 	public Accumulator() {
-		// TODO Auto-generated constructor stub
 		super();
 	}
 
@@ -27,7 +26,6 @@ public class Accumulator extends MemElem {
 	 */
 	public Accumulator(int elem) {
 		super(elem);
-		// TODO Auto-generated constructor stub
 	}
 
 	/**

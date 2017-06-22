@@ -15,8 +15,6 @@ import java.io.IOException;
  */
 public class Compiler {
 
-
-	
 	protected SymbolTableList SymbolTable;
 	private ReadFile read;
 	private WriteFile write;
@@ -100,7 +98,7 @@ public class Compiler {
 	 */
 	private static void passOne(Translate t, SymbolTableList SymbolTable, ReadFile read, WriteFile write)
 			throws OutOfMemoryException, IOException {
-		read.openFile("NewTest3.txt");
+		read.openFile("NewTest4.txt");
 		//read.openFile("stuffTest.txt");
 		//read.openFile("ToBeCompiled.txt");
 		String[] preTrans = read.getInstructions();
@@ -159,9 +157,12 @@ public class Compiler {
 	 */
 	private static void writeBinary(Translate t, SymbolTableList SymbolTable, WriteFile write, String[] MLPInstructions)
 			throws IOException {
-		short[] MLPInstructionsBinary = t.generateExecutableShort( 
-				t.generateExecutableString( MLPInstructions, SymbolTable ) );
+		String[] instructionString = t.generateExecutableString( MLPInstructions, SymbolTable );
+		short[] MLPInstructionsBinary = t.generateExecutableShort( instructionString );
 		String[] MLPInstructionsBinaryString = t.generateBinary(MLPInstructions, SymbolTable);
+		write.openFile("Instructions.txt");
+		write.writeFile(instructionString);
+		write.closeFile();
 		write.openBinaryFile();
 		write.writeBinaryFile(MLPInstructionsBinary);
 		write.closeFile();

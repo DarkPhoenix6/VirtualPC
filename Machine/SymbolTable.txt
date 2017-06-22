@@ -1,92 +1,92 @@
 SymbolTable 
-Avail= 77 
-count= 76 
+Avail= 78 
+count= 75 
  
 Node: HEADNODE 
 Location: 0 
 Initial Value: 0 
  
+Node: LOOP0 
+Location: 32 
+Initial Value: 0 
+ 
 Node: IFLABEL0 
-Location: 34 
+Location: 41 
 Initial Value: 0 
  
 Node: IFLABEL0END 
-Location: 35 
-Initial Value: 0 
- 
-Node: IFFAIL0 
-Location: 43 
-Initial Value: 0 
- 
-Node: IFRETURN0 
-Location: 43 
-Initial Value: 0 
- 
-Node: LOOP0 
-Location: 46 
+Location: 42 
 Initial Value: 0 
  
 Node: IFLABEL1 
-Location: 51 
+Location: 48 
 Initial Value: 0 
  
 Node: IFLABEL1END 
-Location: 52 
+Location: 49 
 Initial Value: 0 
  
-Node: IFFAIL1 
-Location: 67 
+Node: IFLABEL2 
+Location: 56 
 Initial Value: 0 
  
-Node: IFRETURN1 
-Location: 67 
+Node: IFLABEL2END 
+Location: 57 
+Initial Value: 0 
+ 
+Node: IFFAIL0 
+Location: 66 
+Initial Value: 0 
+ 
+Node: IFRETURN0 
+Location: 66 
 Initial Value: 0 
  
 Node: DONE 
-Location: 75 
+Location: 74 
 Initial Value: 0 
  
 Node: A 
 Location: 99 
 Initial Value: 0 
  
-Node:  
+Node: B 
 Location: 98 
 Initial Value: 0 
  
-Node: B 
+Node: Math0 
 Location: 97 
 Initial Value: 0 
  
-Node: Math0 
+Node: Math1 
 Location: 96 
 Initial Value: 0 
  
-Node: Math1 
+Node: Math2 
 Location: 95 
 Initial Value: 0 
  
-Node: Math2 
+Node: D 
 Location: 94 
 Initial Value: 0 
  
-Node: D 
+Node: Math3 
 Location: 93 
 Initial Value: 0 
  
-Node: Math3 
+Node: Math4 
 Location: 92 
 Initial Value: 0 
  
-Node: Math4 
+Node: Math5 
 Location: 91 
 Initial Value: 0 
  
-Node: Math5 
+Node: C 
 Location: 90 
 Initial Value: 0 
  
-Node: C 
+Node: X 
 Location: 89 
 Initial Value: 0 
  
@@ -94,11 +94,11 @@ Node: IF0
 Location: 88 
 Initial Value: 0 
  
-Node: X 
+Node: IF1 
 Location: 87 
 Initial Value: 0 
  
-Node: IF1 
+Node: IF2 
 Location: 86 
 Initial Value: 0 
  
@@ -118,19 +118,15 @@ Node: PLUS9
 Location: 82 
 Initial Value: 9 
  
-Node: PLUS5 
-Location: 81 
-Initial Value: 5 
- 
-Node: ZERO 
-Location: 80 
-Initial Value: 0 
- 
 Node: PLUS1 
-Location: 79 
+Location: 81 
 Initial Value: 1 
  
 Node: MINUS1 
-Location: 78 
+Location: 80 
 Initial Value: -1 
+ 
+Node: ZERO 
+Location: 79 
+Initial Value: 0 
  

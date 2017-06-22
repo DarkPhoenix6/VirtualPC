@@ -185,7 +185,6 @@ public class WriteFile implements Write {
 				binOutput.writeShort(instruction);
 			}
 		} catch (Exception e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 		

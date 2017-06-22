@@ -30,7 +30,7 @@ public class MachineDriver {
 	public static void main(String[] args) throws RuntimeException, NullPointerException, Invalid, OutOfMemoryException, IOException {
 		// TODO Auto-generated method stub
 		
-		Computer MYPC = new Computer( "myProgram.bin" );
+		Computer MYPC = new Computer( "myProgram.bin");
 		MYPC.RunProgram();
 		//MYPC.run();
 	}

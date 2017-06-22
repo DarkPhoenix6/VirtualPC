@@ -139,7 +139,6 @@ public class Computer {
 						{cpu.execute();}
 					busRefresh();
 				} catch (Invalid e) {
-					// TODO Auto-generated catch block
 					e.printStackTrace();
 					dump();
 				}
@@ -184,7 +183,6 @@ public class Computer {
 				}
 				busRefresh();
 			} catch (Invalid e) {
-				// TODO Auto-generated catch block
 				e.printStackTrace();
 				dump();
 			}

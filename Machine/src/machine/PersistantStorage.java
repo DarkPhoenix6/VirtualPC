@@ -36,7 +36,7 @@ public abstract class PersistantStorage extends MainMem{
 	 */
 	public PersistantStorage() 
 	{
-		this(1000);
+		this(10000);
 	}
 
 
